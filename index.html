@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Van Der Waal's Equation</title>
+  </head>
+  <body>
+    <h1>What is Van der Waal's Equation?</h1>
+
+    In school, we learn that PV = nRT. That's neat I guess: we get a function for pressure as being proportional to number of moles, $n$, multiplied by temperature, and divided by volume. Explicitly, P = c * nT / V, where c happens to be the constant 8.314J/K⋅mol in the real world, which we call R. This equation is justified by imagining the force exerted by a particle on the walls of an enclosing chamber, considering temperature as a sort of analog for speed. If we had a single particle weighing a kilogram (humor me) in a 1m by 1m by 1m box, moving 1m/s straight up, we could easily calculate the force it exerts on the outer wall. Assuming elastic collisions, the particle has a change in impulse with the wall of 2 m/s * kg every second. However, as the number of particles increases, the collisions against the walls will go from a 2m/s * kg change every second, to a constant hammering of 2kg m/s^2 = 2 Newton. Converting to a pressure, we have our single massive particle, with its collision assumed to be spread out over time, generating a thid of a pascal of pressure. And if there were two, we would have two-thirds of a pascal of pressure - it's fairly easy to see that assuming particles have no interaction, the force exerted on the wall is directly proportional to the number of particles. Verify for yourself below:
+
+    <!-- You can adjust number of particles and speed. -->
+    <canvas id="particle-model-sim" width="1000" height="1000"></canvas>
+
+    It does get a little more interesting when we consider particles of different speed. If our particle was going 2 m/s, we would actually have 8 Pa, since each collision would have an impulse of 4 Ns, and they would happen twice as often. In general, we can say that pressure is actually proportional to velocity-squared. In fact, temperature is also defined to be proportional to particle velocity squared, so we have the reasoning for why pressure is proportional to temperature.
+
+    However, it's all going to go haywire in a second, when we try to understand why pressure is inversely proportional to volume. Our particle is traveling straight up. If we increase the volume in the x-axis, it has no effect on the pressure in our simulation, yet the volume changes. This contradicts our law. The trick is that particles don't go straight up. They go in completely random directions. So particles can also move left and right. For the rest of the article, I'll consider what happens in 2D, since that is where my sim takes place. The overall idea is that the general principles in 2D translate well to 3D. Note that in 2D land, our pressure is force-per-length, and our volume is replaced with area. Concretely, the pressure of our single, 1m/s particle is now one-half of a N/m, instead of one-third of a Pascal.
+
+    Assuming a particle starts with a speed s in a random direction, we can still fairly easily compute the expected collisions per second. s * cos(theta) is the number of collisions on the x-axis, and s * sin(theta) is the number of collisisons on the y, for theta randomly chosen betwee 0 and 2pi. Note that collisions on the x now have 2 * s * cos(theta) Ns worth of impulse, and likewise collisions on the y have 2 * s * sin(theta) worth of impulse. In total, our expected impulse per second will be
+
+    s * cos(theta) * 2 * s * cos(theta) * m + s * sin(theta) * 2 * s* sin(theta) * m = 2s^2 * (cos^2(theta) + sin^2(theta)) m = 2s^2 m.
+
+    Big whup. We've added random direction, and still pressure still has the exact same relationship to temperature. This will turn out to give us our inverse-volume relationship, but first we want to make sure that our simulation matches the prediction of an identical pressure between vertical particles and random-direction particles.
+
+    <canvas id="random-direction-sim" width="1000" height="1000"></canvas>
+
+    With our new assumption of random particle direction, we can fix up our volume proportionality. Suppose our rectangle has height h and width w; it's area is w * h. Then we can compute the new impulse per second as 
+
+    (s * cos(theta) / w) * (2 * s * cos(theta) * m) + (s * sin(theta) / h) * (2 * s* sin(theta) * m) = 2m s^2 (sin^2(theta)/w + cos^2(theta)/h)
+    <!-- Well this is a bit troubling - that ain't inversely proportional to volume. I should make the sim first to make sure I can get the answer that I want. -->
+
+    <canvas id="custom-dimensions-sim" width="1000" height="1000"></canvas>
+
+
+
+    <h2>Customize Your Own Simulation</h2>
+    <canvas id="customizable-sim" width="1000" height="1000"></canvas>
+    <canvas id="customizable-sim-output" width="400" height="200"></canvas>
+
+    <label for="atom-count">Atom count</label><input type="number" id="atom-count" value="200" />
+    <label for="attraction">Attraction</label><input type="number" id="attraction" value="200" />
+
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
