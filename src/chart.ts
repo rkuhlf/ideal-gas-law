@@ -1,8 +1,5 @@
-declare module 'https/cdn.jsdelivr.net/npm/chart.js' {
-    export * from 'chart.js';
-}
-
-import { Chart } from 'https://cdn.jsdelivr.net/npm/chart.js';
+// Auto so that all kinds of charts are registered and we don't rely on tree-shaking.
+import { Chart } from "chart.js/auto";
 
 export function initializeChart(ctx: CanvasRenderingContext2D, labels: number[], datasets: number[][], legend: string[], yLabel: string, title: string): Chart {
   const colors = [
