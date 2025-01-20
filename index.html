@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="stylesheet" href="./style.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Van Der Waal's Equation</title>
   </head>
@@ -13,6 +15,9 @@
 
     <!-- You can adjust number of particles and speed. -->
     <canvas id="particle-model-sim" width="1000" height="1000"></canvas>
+    <button id="add-atom">Add atom</button>
+    <canvas id="particle-model-sim-output" width="400" height="200"></canvas>
+
 
     It does get a little more interesting when we consider particles of different speed. If our particle was going 2 m/s, we would actually have 8 Pa, since each collision would have an impulse of 4 Ns, and they would happen twice as often. In general, we can say that pressure is actually proportional to velocity-squared. In fact, temperature is also defined to be proportional to particle velocity squared, so we have the reasoning for why pressure is proportional to temperature.
 
@@ -25,11 +30,23 @@
     Big whup. We've added random direction, and still pressure still has the exact same relationship to temperature. This will turn out to give us our inverse-volume relationship, but first we want to make sure that our simulation matches the prediction of an identical pressure between vertical particles and random-direction particles.
 
     <canvas id="random-direction-sim" width="1000" height="1000"></canvas>
+    <input type="checkbox" id="random-direction" /><label for="random-direction">Randomize direction</label>
+    <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
+
 
     With our new assumption of random particle direction, we can fix up our volume proportionality. Suppose our rectangle has height h and width w; it's area is w * h. Then we can compute the new impulse per second as 
 
     (s * cos(theta) / w) * (2 * s * cos(theta) * m) + (s * sin(theta) / h) * (2 * s* sin(theta) * m) = 2m s^2 (sin^2(theta)/w + cos^2(theta)/h)
     <!-- Well this is a bit troubling - that ain't inversely proportional to volume. I should make the sim first to make sure I can get the answer that I want. -->
+    <!-- The issue is that I didn't adjust length. This correctly computes the total impulse. However, we want the pressure, which means we have to divide by 2(w + h) -->
+    <!-- And in fact I think that we need also to vertical sides separately from horizontal sides? -->
+    <!-- (sin^2(theta)/w + cos^2(theta)/h) / (w + h) = (sin^2(theta)/(w^2 + wh) + cos^2(theta)/(wh + h^2)) -->
+    <!-- (sin^2(theta)/w + cos^2(theta)/h) / (w + h) = (sin^2(theta)h/(w^2h + wh^2) + cos^2(theta)w/(w^2h + wh^2)) -->
+    <!-- (sin^2(theta)/w + cos^2(theta)/h) / (w + h) = (sin^2(theta)h + cos^2(theta)w)/(w + h)wh -->
+    <!-- (sin^2(theta)/w + cos^2(theta)/h) / (w + h) = (sin^2(theta)h + cos^2(theta)w)/(w + h) wh -->
+    <!-- Hmph. A bit odd -->
+
+    <!-- Next, try with just the sides. -->
 
     <canvas id="custom-dimensions-sim" width="1000" height="1000"></canvas>
 

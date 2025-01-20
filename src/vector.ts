@@ -43,3 +43,9 @@ export function added(v1: number[], v2: number[]): number[] {
 export function dist(v1: number[], v2: number[]): number {
   return magnitude(added(v1, scaled(v2, -1)))
 }
+
+export function randomDirection(): number[] {
+  const theta = Math.random() * 2 * Math.PI;
+
+  return [Math.cos(theta), Math.sin(theta)];
+}
