@@ -4,9 +4,9 @@ import { initializeRandomDirectionSim } from "./sims/random-direction-sim.js";
 import { initializeParticleSim } from "./sims/single-particle-sim.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // initializeParticleSim();
-  // initializeRandomDirectionSim();
-  // initializeCustomizableSim();
+  initializeParticleSim();
+  initializeRandomDirectionSim();
+  initializeCustomizableSim();
   initializeCustomDimensionSim();
 });
 

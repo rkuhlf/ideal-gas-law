@@ -1,7 +1,8 @@
 import { initializeChart } from "./chart.js";
 import { MovingAverage } from "./moving-average.js";
-import { Simulation, ensureSimAtomCount, renderSimulation } from "./pressure-simulation.js";
+import { Simulation, ensureSimAtomCount } from "./pressure-simulation.js";
 import { screenActiveInterval } from "./canvas-helpers.js";
+import { renderSimulation } from "./render-simulation.js";
 
 function getNewAtom(width: number, height: number) {
   const mag = 500;
@@ -95,13 +96,13 @@ export function initializeCustomizableSim() {
       repulsiveness: attraction,
     });
     
-    totalImpulse.addItem(result.totalCollisionImpulse);
-    totalImpulseAverage.addItem(result.totalCollisionImpulse);
-  }, simulationPeriod * 1000);
+    totalImpulse.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
+    totalImpulseAverage.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
+  }, simulationCanvas, simulationPeriod * 1000);
 
   screenActiveInterval(() => {
     renderSimulation(simulationCanvas, simCtx, sim);
-  }, renderPeriod * 1000);
+  }, simulationCanvas, renderPeriod * 1000);
 
   const chartData: number[][] = [[], []];
   const chartLabels: number[] = [];
@@ -115,5 +116,5 @@ export function initializeCustomizableSim() {
     chartData[1].push(totalImpulseAverage.getAverage());
     chartData[0].push(totalImpulse.getAverage());
     chart.update();
-  }, 1000);
+  }, simulationCanvas, 1000);
 }

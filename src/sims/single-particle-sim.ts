@@ -1,7 +1,8 @@
 import { screenActiveInterval } from "../canvas-helpers.js";
 import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
-import { Simulation, renderSimulation } from "../pressure-simulation.js";
+import { Simulation } from "../pressure-simulation.js";
+import { renderSimulation } from "../render-simulation.js";
 
 function getNewAtom(width: number, height: number) {
     return {
@@ -94,13 +95,13 @@ export function initializeParticleSim() {
             repulsiveness: 0,
         });
 
-        totalImpulse.addItem(result.totalCollisionImpulse);
-        totalImpulseAverage.addItem(result.totalCollisionImpulse);
-    }, simulationPeriod * 1000);
+        totalImpulse.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
+        totalImpulseAverage.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
+    }, simulationCanvas, simulationPeriod * 1000);
 
     screenActiveInterval(() => {
         renderSimulation(simulationCanvas, simCtx, sim);
-    }, renderPeriod * 1000);
+    }, simulationCanvas, renderPeriod * 1000);
 
     const chartData: number[][] = [[], []];
     const chartLabels: number[] = [];
@@ -114,5 +115,5 @@ export function initializeParticleSim() {
         chartData[1].push(totalImpulseAverage.getAverage());
         chartData[0].push(totalImpulse.getAverage());
         chart.update();
-    }, 1000);
+    }, simulationCanvas, 1000);
 }

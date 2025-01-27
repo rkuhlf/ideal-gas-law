@@ -120,7 +120,7 @@ export function initializeCustomDimensionSim() {
 
         timesArea.addItem(pressure * width * height);
         timesAreaAverage.addItem(pressure * width * height);
-    }, simulationPeriod * 1000);
+    }, simulationCanvas, simulationPeriod * 1000);
 
     screenActiveInterval(() => {
         const topLeftX = simulationCanvas.width / 2 - width / 2
@@ -138,7 +138,7 @@ export function initializeCustomDimensionSim() {
             topLeftY - offset / 2,
             width + offset,
             height + offset);
-    }, renderPeriod * 1000);
+    }, simulationCanvas, renderPeriod * 1000);
 
     const timesAreaChartData: number[][] = [[], []];
     // const timesAreaChart = initializeChart(timesAreaCtx, chartLabels, timesAreaChartData, ['Live Data', 'Moving Average'], "Pressure * Area ()", "Pressure * Area vs. Time");
@@ -152,5 +152,5 @@ export function initializeCustomDimensionSim() {
         // timesAreaChartData[1].push(timesAreaAverage.getAverage());
         // timesAreaChartData[0].push(timesArea.getAverage());
         // timesAreaChart.update();
-    }, 1000);
+    }, simulationCanvas, 1000);
 }

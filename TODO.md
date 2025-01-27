@@ -6,10 +6,8 @@
 6. Add a size for the particles.
 7. When you go off the page and come back it usually is completely broken - everything's in the corners and whatnot. Probably something with intervals being funky.
 
-1. Write a bit of a description to turn it into an article about Van der Waal's equation for pressure in a closed system.
 
-1. Make it work better with resizing.
-1. Make it only the one that is on the screen play.
+1. ** Make it only the one that is on the screen play.
 
 
 
