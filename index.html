@@ -34,23 +34,18 @@
     <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
 
 
-    With our new assumption of random particle direction, we can fix up our volume proportionality. Suppose our rectangle has height h and width w; it's area is w * h. Then we can compute the new impulse per second as 
+    With our new assumption of random particle direction, we can fix up our volume proportionality. Suppose our rectangle has height h and width w; it's area is w * h. Now we can compute the pressure on each wall separately. A single side wall will experience s * cos(theta) / (2 * w) collisions every second. Each of those collisions has 2 * s * cos(theta) worth of force. Multiplying, we see that the average impulse will be
+    
+    s * cos(theta) / (2 * w) * 2 * s * cos(theta) = s^2 cos^2(theta) / w
 
-    (s * cos(theta) / w) * (2 * s * cos(theta) * m) + (s * sin(theta) / h) * (2 * s* sin(theta) * m) = 2m s^2 (sin^2(theta)/w + cos^2(theta)/h)
-    <!-- Well this is a bit troubling - that ain't inversely proportional to volume. I should make the sim first to make sure I can get the answer that I want. -->
-    <!-- The issue is that I didn't adjust length. This correctly computes the total impulse. However, we want the pressure, which means we have to divide by 2(w + h) -->
-    <!-- And in fact I think that we need also to vertical sides separately from horizontal sides? -->
-    <!-- (sin^2(theta)/w + cos^2(theta)/h) / (w + h) = (sin^2(theta)/(w^2 + wh) + cos^2(theta)/(wh + h^2)) -->
-    <!-- (sin^2(theta)/w + cos^2(theta)/h) / (w + h) = (sin^2(theta)h/(w^2h + wh^2) + cos^2(theta)w/(w^2h + wh^2)) -->
-    <!-- (sin^2(theta)/w + cos^2(theta)/h) / (w + h) = (sin^2(theta)h + cos^2(theta)w)/(w + h)wh -->
-    <!-- (sin^2(theta)/w + cos^2(theta)/h) / (w + h) = (sin^2(theta)h + cos^2(theta)w)/(w + h) wh -->
-    <!-- Hmph. A bit odd -->
+    Spread across the entire wall, we divide by h to see that the pressure contribution from a single particle should be s^2 cos^2(theta) / (w * h). We can do the same for the top and bottom wall and get a pressure of s^2 sin^2(theta) / (w * h). Notice that it is because of the symmetry of sine and cosine that we get the same pressure on the top walls and the side walls. Integral 0 to 2pi of sin^2(x) = pi, so average is 1/2. So, the pressure will be s^2 / 2(w * h) for all of the walls.
 
-    <!-- Next, try with just the sides. -->
-
-    <canvas id="custom-dimensions-sim" width="1000" height="1000"></canvas>
-
-
+    <canvas id="custom-dimension-sim" width="1000" height="1000"></canvas>
+    <label for="height-input">Height</label><input type="number" name="height" id="height-input">
+    <label for="width-input">Width</label><input type="number" name="width" id="width-input">
+    <canvas id="custom-dimension-output" width="400" height="200"></canvas>
+    <canvas id="custom-dimension-output-per-area" width="400" height="200"></canvas>
+    
 
     <h2>Customize Your Own Simulation</h2>
     <canvas id="customizable-sim" width="1000" height="1000"></canvas>

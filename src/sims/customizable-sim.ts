@@ -1,7 +1,8 @@
 import { screenActiveInterval } from "../canvas-helpers.js";
 import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
-import { Simulation, ensureSimAtomCount, renderSimulation } from "../pressure-simulation.js";
+import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
+import { renderSimulation } from "../render-simulation.js";
 
 function getNewAtom(width: number, height: number) {
   const mag = 500;

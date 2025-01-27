@@ -4,7 +4,8 @@ import { gaussianRandom } from "./math-helpers.js";
 import { added, dist, magnitude, normalized, scaled } from "./vector.js";
 
 export type SimulationResult = {
-  totalCollisionImpulse: number;
+  totalHorizontalImpulse: number;
+  totalVerticalImpulse: number;
 }
 
 interface UpdateSettings {
@@ -28,7 +29,8 @@ export class Simulation {
 
   public update(timeStep: number, updateSettings: UpdateSettings): SimulationResult {
     console.log("Update");
-    let totalCollisionImpulse = 0;
+    let totalHorizontalImpulse = 0;
+    let totalVerticalImpulse = 0;
 
     const accelerations = [];
     // The total energy of each atom should be preserved.
@@ -65,11 +67,11 @@ export class Simulation {
         atom.position[0] = this.width;
 
         // Record the change in impulse provided by the container; that is the change in impulse the container received.
-        totalCollisionImpulse += Math.abs(atom.velocity[0]) * 2;
+        totalHorizontalImpulse += Math.abs(atom.velocity[0]) * 2;
       } else if (atom.position[0] < 0) {
         atom.velocity[0] = Math.abs(atom.velocity[0]);
         atom.position[0] = 0;
-        totalCollisionImpulse += Math.abs(atom.velocity[0]) * 2;
+        totalHorizontalImpulse += Math.abs(atom.velocity[0]) * 2;
       }
 
       if (atom.position[1] > this.height) {
@@ -77,15 +79,14 @@ export class Simulation {
         atom.position[1] = this.height;
 
         // Record the change in impulse provided by the container; that is the change in impulse the container received.
-        totalCollisionImpulse += Math.abs(atom.velocity[1]) * 2;
+        totalVerticalImpulse += Math.abs(atom.velocity[1]) * 2;
       } else if (atom.position[1] < 0) {
         atom.velocity[1] = Math.abs(atom.velocity[1]);
         atom.position[1] = 0;
-        totalCollisionImpulse += Math.abs(atom.velocity[1]) * 2;
+        totalVerticalImpulse += Math.abs(atom.velocity[1]) * 2;
       }
 
-      // TODO: Update the grid to reflect that the atom has changed position.
-      this.grid.moveItem(atom, prevX, prevY, atom.position[0], atom.position[1]);
+      // this.grid.moveItem(atom, prevX, prevY, atom.position[0], atom.position[1]);
     }
 
     // After all of the this.atoms have moved, we can adjust all of their velocities so their total energy remains correct.
@@ -109,25 +110,36 @@ export class Simulation {
     }
 
     return {
-      totalCollisionImpulse
+      totalHorizontalImpulse,
+      totalVerticalImpulse
     }
   }
 
   public addAtom(atom: Atom) {
     this.atoms.push(atom);
-    this.grid.addItem(atom, atom.position[0], atom.position[1]);
-    console.log(this.grid);
+    // this.grid.addItem(atom, atom.position[0], atom.position[1]);
   }
 
   public removeAtom() {
     const atom = this.atoms.pop();
     if (!atom) return;
-    this.grid.removeItem(atom, atom.position[0], atom.position[1]);
+    // this.grid.removeItem(atom, atom.position[0], atom.position[1]);
   }
 
   public getAtoms(): Atom[] {
     // TODO: Make this return a copy so it can't be modified. Or return as const.
     return this.atoms;
+  }
+
+  public resize(width: number, height: number) {
+    // TODO: This doesn't update grid since I'm currently not using it.
+    for (const atom of this.atoms) {
+      atom.position[0] *= width / this.width;
+      atom.position[1] *= height / this.height;
+    }
+
+    this.width = width;
+    this.height = height;
   }
 }
 
@@ -228,51 +240,4 @@ export function ensureSimAtomCount(sim: Simulation, spawner: () => Atom, count: 
   while (count < sim.getAtoms().length) {
     sim.removeAtom();
   }
-}
-
-var cursor_x = -1;
-var cursor_y = -1;
-document.onmousemove = function(event)
-{
- cursor_x = event.pageX;
- cursor_y = event.pageY;
-}
-setInterval(check_cursor, 1000);
-function check_cursor(){console.log('Cursor at: '+cursor_x+', '+cursor_y);}
-export function renderSimulation(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, sim: Simulation) {
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  for (const atom of sim.getAtoms()) {
-    drawAtom(ctx, atom);
-  }
-
-  // for (const atom of sim.grid.getNear(cursor_x, cursor_y, 50)) {
-  //   drawAtomColor(ctx, atom);
-  // }
-
-  // ctx.beginPath();
-  // ctx.arc(cursor_x, cursor_y, 50, 0, Math.PI * 2);
-  // ctx.strokeStyle = "blue"; // Color of the perimeter
-  // ctx.lineWidth = 2;        // Thickness of the perimeter
-  // ctx.stroke();             // Draw the stroke
-  // ctx.closePath();
-}
-
-function drawAtom(ctx: CanvasRenderingContext2D, atom: Atom) {
-  // Draw a single dot
-  ctx.beginPath();
-  ctx.arc(atom.position[0], atom.position[1], 5, 0, Math.PI * 2);
-  ctx.fillStyle = "black"; // Dot color
-  ctx.fill();
-  ctx.closePath();
-}
-
-function drawAtomColor(ctx: CanvasRenderingContext2D, atom: Atom) {
-  // Draw a single dot
-  ctx.beginPath();
-  ctx.arc(atom.position[0], atom.position[1], 5, 0, Math.PI * 2);
-  ctx.fillStyle = "red"; // Dot color
-  ctx.fill();
-  ctx.closePath();
 }
