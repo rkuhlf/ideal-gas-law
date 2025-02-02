@@ -1,0 +1,13 @@
+syntax = "proto3";
+package simulation_interface;
+option go_package = "github.com/rkuhlf/ideal_gas_law/protos";
+
+
+message Position {
+    float x = 1;
+    float y = 2;
+}
+
+message SimulationState {
+    repeated Position atom_positions = 1;
+}

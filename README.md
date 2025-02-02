@@ -17,3 +17,7 @@ So repulsiveness should have been a property of some kind of simulator settings 
 
 ### Stack
 - This is probably a good use case for protobuf, having to communicate so much data like this.
+    - We prefer explicitly calling set in the global syntax that way we don't just have everything imported.
+    - No need for a version field since everything gets updated all at once.
+
+- TODO: Add a folder with a bunch of scripts that I add to my bin that do a lot of the building stuff for me. .sh is probably fine.
