@@ -151,7 +151,22 @@ export function initializeCustomizableSim() {
   }, simulationCanvas, simulationPeriod * 1000);
 
   screenActiveInterval(() => {
-    renderSimulation(simulationCanvas, simCtx, sim);
+    const topLeftX = simulationCanvas.width / 2 - sim.width / 2
+    const topLeftY = simulationCanvas.height / 2 - sim.height / 2
+    renderSimulation(simulationCanvas, simCtx, sim, [
+        topLeftX,
+        topLeftY,
+    ]);
+
+    simCtx.strokeStyle = 'rgb(0, 0, 0)';
+    const offset = 10;
+    simCtx.lineWidth = 5;
+    simCtx.strokeRect(
+        topLeftX - offset / 2,
+        topLeftY - offset / 2,
+        sim.width + offset,
+        sim.height + offset);
+
   }, simulationCanvas, renderPeriod * 1000);
 
   const chartData: number[][] = [[], [], []];
