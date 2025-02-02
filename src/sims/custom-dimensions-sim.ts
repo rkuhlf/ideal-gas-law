@@ -5,6 +5,7 @@ import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
 import { renderSimulation } from "../render-simulation.js";
 import { randomDirection, scaled } from "../vector.js";
 import { PressureChart } from "./pressure-chart.js";
+import { addSimResizeListener } from "./resize-handling.js";
 
 function getNewAtom(width: number, height: number) {
     // const mag = (Math.random() - 0.5) * height;
@@ -153,4 +154,7 @@ export function initializeCustomDimensionSim() {
         // timesAreaChartData[0].push(timesArea.getAverage());
         // timesAreaChart.update();
     }, simulationCanvas, 1000);
+
+    // Do nothing on resize.
+    addSimResizeListener(simulationCanvas, (_width: number, _height: number) => {});
 }

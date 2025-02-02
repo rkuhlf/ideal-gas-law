@@ -132,7 +132,7 @@ export class Simulation {
   }
 
   public resize(width: number, height: number) {
-    // TODO: This doesn't update grid since I'm currently not using it.
+    console.log(height);
     for (const atom of this.atoms) {
       atom.position[0] *= width / this.width;
       atom.position[1] *= height / this.height;

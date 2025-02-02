@@ -14,7 +14,7 @@
     In school, we learn that PV = nRT. That's neat I guess: we get a function for pressure as being proportional to number of moles, $n$, multiplied by temperature, and divided by volume. Explicitly, P = c * nT / V, where c happens to be the constant 8.314J/K⋅mol in the real world, which we call R. This equation is justified by imagining the force exerted by a particle on the walls of an enclosing chamber, considering temperature as a sort of analog for speed. If we had a single particle weighing a kilogram (humor me) in a 1m by 1m by 1m box, moving 1m/s straight up, we could easily calculate the force it exerts on the outer wall. Assuming elastic collisions, the particle has a change in impulse with the wall of 2 m/s * kg every second. However, as the number of particles increases, the collisions against the walls will go from a 2m/s * kg change every second, to a constant hammering of 2kg m/s^2 = 2 Newton. Converting to a pressure, we have our single massive particle, with its collision assumed to be spread out over time, generating a thid of a pascal of pressure. And if there were two, we would have two-thirds of a pascal of pressure - it's fairly easy to see that assuming particles have no interaction, the force exerted on the wall is directly proportional to the number of particles. Verify for yourself below:
 
     <!-- You can adjust number of particles and speed. -->
-    <canvas id="particle-model-sim" width="1000" height="1000"></canvas>
+    <canvas class="sim-canvas" id="particle-model-sim" width="1000" height="1000"></canvas>
     <button id="add-atom">Add atom</button>
     <canvas id="particle-model-sim-output" width="400" height="200"></canvas>
 
@@ -32,7 +32,7 @@
 
     Big whup. We've added random direction, and still pressure still has the exact same relationship to temperature. This will turn out to give us our inverse-volume relationship, but first we want to make sure that our simulation matches the prediction of an identical pressure between vertical particles and random-direction particles.
 
-    <canvas id="random-direction-sim" width="1000" height="1000"></canvas>
+    <canvas class="sim-canvas" id="random-direction-sim" width="1000" height="1000"></canvas>
     <input type="checkbox" id="random-direction" /><label for="random-direction">Randomize direction</label>
     <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
 
@@ -43,7 +43,7 @@
 
     Spread across the entire wall, we divide by h to see that the pressure contribution from a single particle should be s^2 cos^2(theta) / (w * h). We can do the same for the top and bottom wall and get a pressure of s^2 sin^2(theta) / (w * h). Notice that it is because of the symmetry of sine and cosine that we get the same pressure on the top walls and the side walls. Integral 0 to 2pi of sin^2(x) = pi, so average is 1/2. So, the pressure will be s^2 / 2(w * h) for all of the walls.
 
-    <canvas id="custom-dimension-sim" width="1000" height="1000"></canvas>
+    <canvas class="sim-canvas" id="custom-dimension-sim" width="1000" height="1000"></canvas>
     <label for="height-input">Height</label><input type="number" name="height" id="height-input">
     <label for="width-input">Width</label><input type="number" name="width" id="width-input">
     <canvas id="custom-dimension-output" width="400" height="200"></canvas>
@@ -51,7 +51,7 @@
     
 
     <h2>Customize Your Own Simulation</h2>
-    <canvas id="customizable-sim" width="1000" height="1000"></canvas>
+    <canvas class="sim-canvas" id="customizable-sim" width="1000" height="1000"></canvas>
     <canvas id="customizable-sim-output" width="400" height="200"></canvas>
 
     <label for="atom-count">Atom count</label><input type="number" id="atom-count" value="200" />

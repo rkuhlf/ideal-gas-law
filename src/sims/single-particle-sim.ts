@@ -3,6 +3,7 @@ import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
 import { Simulation } from "../pressure-simulation.js";
 import { renderSimulation } from "../render-simulation.js";
+import { addSimResizeListener } from "./resize-handling.js";
 
 function getNewAtom(width: number, height: number) {
     return {
@@ -116,4 +117,6 @@ export function initializeParticleSim() {
         chartData[0].push(totalImpulse.getAverage());
         chart.update();
     }, simulationCanvas, 1000);
+
+    addSimResizeListener(simulationCanvas, sim.resize.bind(sim));
 }
