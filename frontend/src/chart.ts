@@ -5,6 +5,7 @@ export function initializeChart(ctx: CanvasRenderingContext2D, labels: number[],
   const colors = [
     [0, 0, 255],
     [200, 50, 50],
+    [50, 200, 50],
   ]
   const datasetsWithSettings = datasets.map((data: number[], i: number) => {
     return {

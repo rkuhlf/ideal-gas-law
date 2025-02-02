@@ -21,8 +21,8 @@ export class Simulation {
   public grid: Grid<Atom>;
 
   constructor(
-    private width: number,
-    private height: number
+    public width: number,
+    public height: number
   ) {
     this.grid = new Grid(20, 20, width, height);
   }
@@ -50,7 +50,7 @@ export class Simulation {
       // netAcceleration = added(netAcceleration, getRandomAcceleration());
 
       // Make the atom attracted by all of the other this.atoms.
-      netAcceleration = added(netAcceleration, scaled(getRepulsionAcceleration(atom, relevantAtoms, updateSettings), -1));
+      // netAcceleration = added(netAcceleration, scaled(getRepulsionAcceleration(atom, relevantAtoms, updateSettings), -1));
 
       accelerations.push(netAcceleration);
     }
@@ -132,7 +132,6 @@ export class Simulation {
   }
 
   public resize(width: number, height: number) {
-    console.log(height);
     for (const atom of this.atoms) {
       atom.position[0] *= width / this.width;
       atom.position[1] *= height / this.height;

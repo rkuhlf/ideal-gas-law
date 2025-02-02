@@ -1,12 +1,15 @@
-
-export function magnitude(vector: number[]): number {
+export function squaredMagnitude(vector: number[]): number {
   let squaredTotal = 0;
 
   for (const el of vector) {
     squaredTotal += el * el;
   }
 
-  return Math.sqrt(squaredTotal);
+  return squaredTotal
+}
+
+export function magnitude(vector: number[]): number {
+  return Math.sqrt(squaredMagnitude(vector));
 }
 
 export function normalized(vector: number[]): number[] {

@@ -25,3 +25,4 @@ Unfortunately it only made sense to have a simulation class whenever there was a
     - No need for a version field since everything gets updated all at once.
 
 - TODO: Add a folder with a bunch of scripts that I add to my bin that do a lot of the building stuff for me. .sh is probably fine.
+- Perhaps in order to support more particles it might be useful to investigate webGL. It looks like I'm having a hard time even rending this many particles.

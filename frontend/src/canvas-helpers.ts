@@ -47,7 +47,7 @@ function addResizeEndedListener(callback: () => void) {
   });
 }
 
-export function addResizeListener(simulationCanvas: HTMLCanvasElement, callback: (width: number, height: number) => void) {
+export function addResizeListener(simulationCanvas: HTMLCanvasElement, callback: (width: number, height: number) => void = () => {}) {
   const onResize = () => {
     const newWidth = simulationCanvas.getBoundingClientRect().width;
     const newHeight = simulationCanvas.getBoundingClientRect().height;

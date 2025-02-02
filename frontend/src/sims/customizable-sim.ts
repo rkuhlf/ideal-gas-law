@@ -4,6 +4,9 @@ import { MovingAverage } from "../moving-average.js";
 import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
 import { renderSimulation } from "../render-simulation.js";
 import { addResizeListener } from "../canvas-helpers.js";
+import { handleCustomDimensions } from "./input-handlers.js";
+import { Atom } from "../atom.js";
+import { scaled, squaredMagnitude } from "../vector.js";
 
 function getNewAtom(width: number, height: number) {
   const mag = 500;
@@ -14,11 +17,30 @@ function getNewAtom(width: number, height: number) {
   }
 }
 
+function getTemperature(sim: Simulation): number {
+  const atoms = sim.getAtoms();
+  return atoms.reduce((acc: number, a: Atom): number => {
+    return acc + squaredMagnitude(a.velocity) / atoms.length;
+  }, 0);
+}
+
+function setTemperature(sim: Simulation, newTemp: number) {
+  let prevTemp = getTemperature(sim);
+  let ratio = Math.sqrt(newTemp / prevTemp);
+
+  for (const atom of sim.getAtoms()) {
+    atom.velocity = scaled(atom.velocity, ratio);
+  }
+}
+
 function getElements() {
   const simulationCanvas = document.getElementById("customizable-sim");
   const impulseCanvas = document.getElementById("customizable-sim-output");
   const atomCountInput = document.getElementById("atom-count");
-  const attractionInput = document.getElementById("attraction");
+  const constantFactorInput = document.getElementById("constant-input");
+  const heightInput = document.getElementById("custom-sim-height-input");
+  const widthInput = document.getElementById("costum-sim-width-input");
+  const temperatureInput = document.getElementById("temperature-input");
 
   if (!(simulationCanvas instanceof HTMLCanvasElement)) {
     console.error("Could not find canvas");
@@ -34,7 +56,22 @@ function getElements() {
     throw new Error("Failed to find element");
   }
 
-  if (!(attractionInput instanceof HTMLInputElement)) {
+  if (!(constantFactorInput instanceof HTMLInputElement)) {
+    console.error("Could not find attraction input");
+    throw new Error("Failed to find element");
+  }
+
+  if (!(heightInput instanceof HTMLInputElement)) {
+    console.error("Could not find attraction input");
+    throw new Error("Failed to find element");
+  }
+
+  if (!(widthInput instanceof HTMLInputElement)) {
+    console.error("Could not find attraction input");
+    throw new Error("Failed to find element");
+  }
+
+  if (!(temperatureInput instanceof HTMLInputElement)) {
     console.error("Could not find attraction input");
     throw new Error("Failed to find element");
   }
@@ -54,37 +91,48 @@ function getElements() {
     simCtx,
     impulseCtx,
     atomCountInput,
-    attractionInput,
+    constantFactorInput,
+    heightInput,
+    widthInput,
+    temperatureInput
   }
 }
 
 export function initializeCustomizableSim() {
   let simulationPeriod = 0.02;
-  let renderPeriod = 0.04;
-
-  let attraction: number;
+  let renderPeriod = 0.02;
 
   const {
     simulationCanvas,
     simCtx,
     impulseCtx,
     atomCountInput,
-    attractionInput,
+    heightInput,
+    widthInput,
+    temperatureInput,
+    constantFactorInput,
   } = getElements();
 
-  const width = simulationCanvas.width;
-  const height = simulationCanvas.height;
-  const sim = new Simulation(width, height);
+  const sim = new Simulation(Math.floor(simulationCanvas.getBoundingClientRect().width / 2), Math.floor(simulationCanvas.getBoundingClientRect().height / 2));
+  addResizeListener(simulationCanvas);
+  handleCustomDimensions(sim, heightInput, widthInput);
 
-  ensureSimAtomCount(sim, () => getNewAtom(width, height), atomCountInput.valueAsNumber);
+  atomCountInput.valueAsNumber = 50;
+  ensureSimAtomCount(sim, () => getNewAtom(sim.width, sim.height), atomCountInput.valueAsNumber);
   atomCountInput.addEventListener("input", () => {
-    ensureSimAtomCount(sim, () => getNewAtom(width, height), atomCountInput.valueAsNumber);
+    ensureSimAtomCount(sim, () => getNewAtom(sim.width, sim.height), atomCountInput.valueAsNumber);
+    // After we add a bunch of atoms with new velocities, make sure that the temperature is still the same.
+    setTemperature(sim, temperatureInput.valueAsNumber);
   });
 
-  attraction = attractionInput.valueAsNumber;
-  attractionInput.addEventListener("input", () => {
-    attraction = attractionInput.valueAsNumber;
+  temperatureInput.valueAsNumber = 20_000;
+  setTemperature(sim, temperatureInput.valueAsNumber);
+  temperatureInput.addEventListener("input", () => {
+    temperatureInput.valueAsNumber = Math.max(temperatureInput.valueAsNumber, 1);
+    setTemperature(sim, temperatureInput.valueAsNumber);
   });
+
+  constantFactorInput.valueAsNumber = 0.0001;
 
   // We want to collect values for one second.
   const totalImpulse = new MovingAverage(1 / simulationPeriod);
@@ -94,30 +142,31 @@ export function initializeCustomizableSim() {
     const result = sim.update(simulationPeriod, {
       jitteriness: 0,
       minDistance: 5,
-      repulsiveness: attraction,
+      repulsiveness: 0,
     });
     
-    totalImpulse.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
-    totalImpulseAverage.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
+    const pressure = (result.totalHorizontalImpulse / sim.height + result.totalVerticalImpulse / sim.width) / 2;
+    totalImpulse.addItem(pressure);
+    totalImpulseAverage.addItem(pressure);
   }, simulationCanvas, simulationPeriod * 1000);
 
   screenActiveInterval(() => {
     renderSimulation(simulationCanvas, simCtx, sim);
   }, simulationCanvas, renderPeriod * 1000);
 
-  const chartData: number[][] = [[], []];
+  const chartData: number[][] = [[], [], []];
   const chartLabels: number[] = [];
-  const chart = initializeChart(impulseCtx, chartLabels, chartData, ['Live Data', 'Moving Average'], "Pressure ()", "Pressure vs. Time");
+  const chart = initializeChart(impulseCtx, chartLabels, chartData, ['Live Data', 'Moving Average', 'Predicted'], "Pressure ()", "Pressure vs. Time");
   const start = Date.now();
 
   screenActiveInterval(() => {
     const timePassed = Date.now() - start;
     
     chartLabels.push(Math.round(timePassed / 1000));
+    // P = c * nT / A
+    chartData[2].push(constantFactorInput.valueAsNumber * atomCountInput.valueAsNumber * temperatureInput.valueAsNumber / sim.width / sim.height);
     chartData[1].push(totalImpulseAverage.getAverage());
     chartData[0].push(totalImpulse.getAverage());
     chart.update();
   }, simulationCanvas, 1000);
-
-  addResizeListener(simulationCanvas, sim.resize.bind(sim));
 }

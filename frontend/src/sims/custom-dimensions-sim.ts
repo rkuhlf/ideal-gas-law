@@ -1,5 +1,4 @@
 import { screenActiveInterval } from "../canvas-helpers.js";
-import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
 import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
 import { renderSimulation } from "../render-simulation.js";
@@ -83,26 +82,9 @@ export function initializeCustomDimensionSim() {
     } = getElements();
 
 
-    // We need this because we want everything to get updated on "change" event firing, not when the .value changes.
-    let width = Math.floor(simulationCanvas.width / 2);
-    let height = Math.floor(simulationCanvas.height / 2);
-    widthInput.valueAsNumber = width;
-    heightInput.valueAsNumber = height;
+    const sim = new Simulation(Math.floor(simulationCanvas.getBoundingClientRect().width / 2), Math.floor(simulationCanvas.getBoundingClientRect().height / 2));
 
-    const sim = new Simulation(width, height);
-
-    widthInput.addEventListener('change', () => {
-        widthInput.valueAsNumber = Math.min(widthInput.valueAsNumber, simulationCanvas.width);
-        width = widthInput.valueAsNumber;
-        sim.resize(width, height);
-    });
-    heightInput.addEventListener('change', () => {
-        heightInput.valueAsNumber = Math.min(heightInput.valueAsNumber, simulationCanvas.height);
-        height = heightInput.valueAsNumber;
-        sim.resize(width, height);
-    });
-
-    ensureSimAtomCount(sim, () => getNewAtom(width, height), atomCount);
+    ensureSimAtomCount(sim, () => getNewAtom(sim.width, sim.height), atomCount);
 
     // We want to collect values for one second.
     const pressureChart = new PressureChart(impulseCtx, simulationPeriod);
@@ -116,16 +98,16 @@ export function initializeCustomDimensionSim() {
             repulsiveness: 0,
         });
 
-        const pressure = (result.totalHorizontalImpulse / height + result.totalVerticalImpulse / width) / 2
+        const pressure = (result.totalHorizontalImpulse / sim.height + result.totalVerticalImpulse / sim.width) / 2
         pressureChart.runIter(pressure);
 
-        timesArea.addItem(pressure * width * height);
-        timesAreaAverage.addItem(pressure * width * height);
+        timesArea.addItem(pressure * sim.width * sim.height);
+        timesAreaAverage.addItem(pressure * sim.width * sim.height);
     }, simulationCanvas, simulationPeriod * 1000);
 
     screenActiveInterval(() => {
-        const topLeftX = simulationCanvas.width / 2 - width / 2
-        const topLeftY = simulationCanvas.height / 2 - height / 2
+        const topLeftX = simulationCanvas.width / 2 - sim.width / 2
+        const topLeftY = simulationCanvas.height / 2 - sim.height / 2
         renderSimulation(simulationCanvas, simCtx, sim, [
             topLeftX,
             topLeftY,
@@ -137,8 +119,8 @@ export function initializeCustomDimensionSim() {
         simCtx.strokeRect(
             topLeftX - offset / 2,
             topLeftY - offset / 2,
-            width + offset,
-            height + offset);
+            sim.width + offset,
+            sim.height + offset);
     }, simulationCanvas, renderPeriod * 1000);
 
     const timesAreaChartData: number[][] = [[], []];
