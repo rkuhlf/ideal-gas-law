@@ -16,9 +16,21 @@ async function loadWasm() {
 }
 
 
+import katex from "katex";
+import "katex/dist/katex.min.css";
+
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadWasm();
+
+  
+  const mathElements = document.querySelectorAll(".math");
+  for (const el of mathElements) {
+    if (!(el instanceof HTMLElement)) continue;
+    katex.render(el.innerText || "", el);
+  }
+
 
   initializeParticleSim();
   initializeRandomDirectionSim();

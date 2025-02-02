@@ -1,13 +1,7 @@
 2. Get a temperature thing going.
-2.1. Add renormalization - right now the energy explodes if there is any attraction.
-3. Get an ideal gas law like prediction.
 4. Get collisions going.
 5. Get some kind of a van der waal's equation prediction / a, b calculator.
 6. Add a size for the particles.
-7. When you go off the page and come back it usually is completely broken - everything's in the corners and whatnot. Probably something with intervals being funky.
-
-
-1. ** Make it only the one that is on the screen play.
 
 
 
@@ -17,4 +11,12 @@
 1. I was wanting to model heat on a bunch of particles by allowing you to click, and near where you were clicking the particles would speed up.
 
 
-1. Rename to particle sims so that I can make some more pages and reuse the same infrastructure.
+1. Rename to particle sims so that I can make some more pages and reuse the same infrastructure when I build other similar sims.
+
+
+1. Clean up the graphs.
+1. Clean up the writing.
+1. Make everything mathJax.
+
+1. Add remaining parameters to customizable sim.
+1. Add ideal-gas prediction to customizable sim.

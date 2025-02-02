@@ -4,7 +4,7 @@ import { MovingAverage } from "../moving-average.js";
 import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
 import { renderSimulation } from "../render-simulation.js";
 import { magnitude, randomDirection, scaled } from "../vector.js";
-import { addSimResizeListener } from "./resize-handling.js";
+import { addResizeListener } from "../canvas-helpers.js";
 
 function getAtomVelocity(mag: number, isRandomDirection: boolean): number[] {
     if (!isRandomDirection) {
@@ -126,5 +126,5 @@ export function initializeRandomDirectionSim() {
         chart.update();
     }, simulationCanvas, 1000);
 
-    addSimResizeListener(simulationCanvas, sim.resize.bind(sim));
+    addResizeListener(simulationCanvas, sim.resize.bind(sim));
 }

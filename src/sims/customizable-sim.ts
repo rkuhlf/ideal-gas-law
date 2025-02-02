@@ -3,7 +3,7 @@ import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
 import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
 import { renderSimulation } from "../render-simulation.js";
-import { addSimResizeListener } from "./resize-handling.js";
+import { addResizeListener } from "../canvas-helpers.js";
 
 function getNewAtom(width: number, height: number) {
   const mag = 500;
@@ -119,5 +119,5 @@ export function initializeCustomizableSim() {
     chart.update();
   }, simulationCanvas, 1000);
 
-  addSimResizeListener(simulationCanvas, sim.resize.bind(sim));
+  addResizeListener(simulationCanvas, sim.resize.bind(sim));
 }
