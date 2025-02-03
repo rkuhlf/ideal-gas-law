@@ -132,7 +132,7 @@ export function initializeCustomizableSim() {
     setTemperature(sim, temperatureInput.valueAsNumber);
   });
 
-  constantFactorInput.valueAsNumber = 0.0001;
+  constantFactorInput.valueAsNumber = 0.01;
 
   // We want to collect values for one second.
   const totalImpulse = new MovingAverage(1 / simulationPeriod);

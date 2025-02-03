@@ -24,31 +24,30 @@
 
     It does get a little more interesting when we consider particles of different speed. If our particle was going 2 m/s, we would actually have 8 Pa, since each collision would have an impulse of 4 Ns, and they would happen twice as often. In general, we can say that pressure is actually proportional to velocity-squared. In fact, temperature is also defined to be proportional to particle velocity squared, so we have the reasoning for why pressure is proportional to temperature.
 
-    However, it's all going to go haywire in a second, when we try to understand why pressure is inversely proportional to volume. Our particle is traveling straight up. If we increase the volume in the x-axis, it has no effect on the pressure in our simulation, yet the volume changes. This contradicts our law. The trick is that particles don't go straight up. They go in completely random directions. So particles can also move left and right. For the rest of the article, I'll consider what happens in 2D, since that is where my sim takes place. The overall idea is that the general principles in 2D translate well to 3D. Note that in 2D land, our pressure is force-per-length, and our volume is replaced with area. Concretely, our pressure is in N/m instead of Pascals.
-
-    Assuming a particle starts with a speed s in a random direction, we can still fairly easily compute the expected collisions per second. s * cos(theta) is the number of collisions on the x-axis, and s * sin(theta) is the number of collisisons on the y, for theta randomly chosen betwee 0 and 2pi. Note that collisions on the x now have 2 * s * cos(theta) Ns worth of impulse, and likewise collisions on the y have 2 * s * sin(theta) worth of impulse. In total, our expected impulse per second (better thought of as expected force on the container) will be
-
-    s * cos(theta) * 2 * s * cos(theta) * m + s * sin(theta) * 2 * s* sin(theta) * m = 2s^2 * (cos^2(theta) + sin^2(theta)) m = 2s^2 m.
-
-    Big whup. We've added random direction, and still pressure still has the exact same relationship to temperature. Before we get any farther, we want to make sure that our simulation matches the prediction of an identical pressure between vertical particles and random-direction particles.
+    However, it's all going to go haywire in a second, when we try to understand why pressure is inversely proportional to volume. Our particle is traveling straight up. If we decrease the volume towards zero by decreasing our rectangle's width, the ideal gas law would predict that pressure goes to infinity - but it doesn't, at least not in our simulation. So, something must be off. The trick is that particles don't go straight up. They go in completely random directions. So particles can also move left and right. For the rest of the article, I'll consider what happens in 2D, since that is where my sim takes place. The overall idea is that the general principles in 2D translate well to 3D. Note that in 2D land, our pressure is force-per-length, and our volume is replaced with area. Concretely, our pressure is in N/m instead of Pascals. Play around with the effect that random direction has on the sim below:
 
     <canvas class="sim-canvas" id="random-direction-sim" width="1000" height="1000"></canvas>
     <input type="checkbox" id="random-direction" /><label for="random-direction">Randomize direction</label>
+    <!-- TODO: Make this one resizeable as well. -->
+    <!-- TODO: This one should show the vertical, horizontal. -->
     <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
+    <!-- TODO: This one should show the total. -->
+    <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
+    <!-- TODO: This one should show the pressure multiplied by the volume. -->
 
-    Yay! However... Something bad happened when we computed the force on the surrounding container like that. You might assume that pressure is computed by dividing that force by the total area on which it is applied. In fact, that's what I've been labeling as a pressure so far. If we try to compute this way, we bump straight into a contradiction of the ideal gas law:
+    Assuming a particle starts with a speed <span class="math">v</span> and <span class="math">\theta</span> as the angle that the particle's path makes with the horizontal, we can still fairly easily compute the expected collisions per second. The horizontal speed of the particle is <span class="math">v \cdot \cos{\theta}</span>, and with <span class="math">w</span> and <span class="math">h</span> for width and height, <span class="math">\frac{v \cdot \cos{\theta}}{w}</span> is the number of collisions-per-second against vertical walls. Likewise, <span class="math">\frac{v \cdot \sin{\theta}}{h}</span> is the number of collisisons-per-second on the horizontal walls. Note that collisions against vertical walls now have <span class="math">2v \cdot \cos{\theta} \text{Ns}</span>worth of impulse, and likewise collisions on horizontal walls have<span class="math">2v \cdot \sin{\theta} \text{Ns}</span> worth of impulse. In total, our expected impulse per second (better thought of as time-averaged force on the container) will be
 
     <div class="math">
-      P = \frac{2s^2 m}{2w + 2h} = \frac{s^2 m}{w + h}
+      \frac{v \cdot \cos{\theta}}{w} \text{s}^{-1} \cdot (2v \cdot \cos{\theta}) \text{Ns} + \frac{v \cdot \sin{\theta}}{h} \text{s}^{-1} 2v \cdot \sin{\theta} \text{Ns} = 2v^2 \left( \frac{\cos^2{\theta}}{w} + \frac{\sin^2{\theta}}{h} \right)  \text{N}
     </div>
 
-    Instead, we should compute the pressure by finding the expected force on one wall, and dividing by the area of that wall. First, we'll compute pressure this way for a vertical wall. Again, it will experience <span class="math">\frac{s \cdot \cos{\theta}}{2w}</span> collisions every second, and each of those collisions has <span class="math">2s \cdot \cos{\theta}</span> worth of force. Multiplying, we see that the average impulse will be
-    
-    <div class="math">\frac{s \cdot \cos{\theta}}{2w} \cdot (2s \cdot \cos{\theta}) = \frac{s^2 \cos^2(\theta)}{w}</div>
+    Yay! We have a huge equation... Dividing the area over which our force is exerted to get our 2D version of pressure, we have <span class="math">P = v^2 \left( \frac{\cos^2{\theta}}{w(w + h)} + \frac{\sin^2{\theta}}{h(w + h)} \right)  \text{N/m}</span> Although it's briefly troubling that we don't have a nice <span class="math">wh</span> in the denominator, we can resolve it by recalling that we don't care about a single particle - we care about what particles will do on expectation. With our expected values for <span class="math">\theta</span> spread evenly across all angles, we can skip a bit of calculus to conclude that <span class="math">\cos^2{\theta}</span> is on average <span class="math">1/2</span>, and likewise for <span class="math">\sin^2{\theta}</span>. If we go ahead and plug those expected values in, everything cancels nicely to reveal
 
-    Spread across the entire wall, we divide by h to see that the pressure contribution from a single particle should be <span class="math">\frac{s^2 \cos^2(\theta)}{wh} = \frac{s^2 \cos^2(\theta)}{A}</span>. There's our inverse-area relationship! We can do the same for the horizontal walls and get a pressure of <span class="math">\frac{s^2 \sin^2(\theta)}{A}</span>. Although it's briefly troubling that these values aren't identical, we can resolve it by recalling that we don't care about a single particle - we care about what particles will do on expectation. With our expected values for <span class="math">\theta</span> spread evenly across all angles, we can skip a bit of calculus to conclude that <span class="math">\cos^2(\theta)</span> is on average <span class="math">1/2</span>, and likewise for <span class="math">\sin^2{\theta}</span>. Conveniently, we have that the pressure will be <span class="math">\frac{s^2}{2A}</span> for all of the walls.
+    <div class="math">
+      P = \frac{v^2}{2wh} \ \text{N/m}.
+    </div>
 
-    Go ahead and verify that no matter what the dimensions, the pressure on each wall will be the same.
+    Hurrah, we finally have the inverse-area relationship we've been after. Check out the sim below to see for yourself.
 
     <canvas class="sim-canvas" id="custom-dimension-sim" width="1000" height="1000"></canvas>
     <label for="width-input">Width</label><input type="number" name="width" id="width-input">
