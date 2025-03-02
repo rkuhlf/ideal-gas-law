@@ -4,7 +4,7 @@ class LabeledInput extends HTMLElement {
         this.innerHTML = `
         <div class="input-row">
             <label for="${this.getAttribute("name")}">${this.getAttribute("label")}</label>
-            <input type="number" id="${this.getAttribute("name")}" name="${this.getAttribute("name")}">
+            <input type="${this.getAttribute("type") || "number"}" id="${this.getAttribute("name")}" name="${this.getAttribute("name")}">
         </div>`;
     }
 }

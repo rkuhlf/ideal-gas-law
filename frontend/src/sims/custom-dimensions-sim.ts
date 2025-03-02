@@ -5,6 +5,7 @@ import { renderSimulation } from "../render-simulation.js";
 import { randomDirection, scaled } from "../vector.js";
 import { PressureChart } from "./pressure-chart.js";
 import { addResizeListener as synchronizeCanvasDimensions } from "../canvas-helpers.js";
+import { handleCustomDimensions } from "./input-handlers.js";
 
 function getNewAtom(width: number, height: number) {
     // const mag = (Math.random() - 0.5) * height;
@@ -85,6 +86,7 @@ export function initializeCustomDimensionSim() {
     const sim = new Simulation(Math.floor(simulationCanvas.getBoundingClientRect().width / 2), Math.floor(simulationCanvas.getBoundingClientRect().height / 2));
 
     ensureSimAtomCount(sim, () => getNewAtom(sim.width, sim.height), atomCount);
+    handleCustomDimensions(sim, heightInput, widthInput);
 
     // We want to collect values for one second.
     const pressureChart = new PressureChart(impulseCtx, simulationPeriod);

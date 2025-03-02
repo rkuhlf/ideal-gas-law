@@ -1,7 +1,7 @@
 import { screenActiveInterval } from "../canvas-helpers.js";
 import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
-import { Simulation } from "../pressure-simulation.js";
+import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
 import { renderSimulation } from "../render-simulation.js";
 import { addResizeListener } from "../canvas-helpers.js";
 
@@ -18,7 +18,7 @@ function getElements() {
     const simulationCanvas = document.getElementById("particle-model-sim");
     const impulseCanvas = document.getElementById("particle-model-sim-output");
     const perAtomCanvas = document.getElementById("particle-model-sim-output");
-    const addAtomInput = document.getElementById("add-atom");
+    const atomCountInput = document.getElementById("particle-model-atom-count");
 
     if (!(simulationCanvas instanceof HTMLCanvasElement)) {
         console.error("Could not find canvas");
@@ -33,7 +33,7 @@ function getElements() {
         throw new Error("Failed to find element");
     }
 
-    if (!(addAtomInput instanceof HTMLButtonElement)) {
+    if (!(atomCountInput instanceof HTMLInputElement)) {
         console.error("Could not find atom count input");
         throw new Error("Failed to find element");
     }
@@ -57,7 +57,7 @@ function getElements() {
         simCtx,
         impulseCtx,
         perAtomCtx,
-        addAtomInput,
+        atomCountInput,
     }
 }
 
@@ -70,19 +70,18 @@ export function initializeParticleSim() {
         simCtx,
         impulseCtx,
         perAtomCtx,
-        addAtomInput,
+        atomCountInput,
     } = getElements();
 
     const width = simulationCanvas.width;
     const height = simulationCanvas.height;
     const sim = new Simulation(width, height);
 
-    let atomCount = 1;
-    sim.addAtom(getNewAtom(width, height));
-    addAtomInput.onclick = (): void => {
-        atomCount += 1;
-        sim.addAtom(getNewAtom(width, height));
-    }
+    atomCountInput.valueAsNumber = 1;
+    ensureSimAtomCount(sim, () => getNewAtom(sim.width, sim.height), atomCountInput.valueAsNumber);
+    atomCountInput.addEventListener("input", () => {
+        ensureSimAtomCount(sim, () => getNewAtom(sim.width, sim.height), atomCountInput.valueAsNumber);
+    });
     // There should be a chart that says the pressure-per-atom.
 
     // We want to collect values for one second.
@@ -118,5 +117,11 @@ export function initializeParticleSim() {
         chart.update();
     }, simulationCanvas, 1000);
 
-    addResizeListener(simulationCanvas, sim.resize.bind(sim));
+    addResizeListener(simulationCanvas, (width, height) => {
+        for (const particle of sim.getAtoms()) {
+            // Scale up the velocity so that it still has magnitude = height;
+            particle.velocity[1] *= height / Math.abs(particle.velocity[1]);
+        }
+        sim.resize(width, height);
+    });
 }

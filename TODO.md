@@ -3,13 +3,11 @@
 1. Fix the problem with the pressure-per-side.
 
 1. Clean up the graphs.
-    - Add all of the ones I'm supposed to have.
-1. Clean up the CSS (overall layout).
-    - The inputs for most should go over top of the canvas, the graphs below or also to the side. For the make your own simulation, we can have a separate box for the inputs.
-        - Nope, they all need to go over top of the canvas. Welp, it was good practice I guess.
-        - Sort of a grid thing with flexbox.
+    - **Add all of the ones I'm supposed to have.**
 1. Clean up the writing.
 1. Make everything mathJax.
+
+1. Make a nice title. Something with a photo of van der waal.
 
 ## Other Sims
 1. Rename to particle sims so that I can make some more pages and reuse the same infrastructure when I build other similar sims.
