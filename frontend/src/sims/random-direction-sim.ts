@@ -1,7 +1,7 @@
 import { screenActiveInterval } from "../canvas-helpers.js";
 import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
-import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
+import { Simulation, ensureSimAtomCount, getHorizontalPressure, getPressure, getVerticalPressure } from "../pressure-simulation.js";
 import { renderBoxedSimulation, renderSimulation } from "../render-simulation.js";
 import { magnitude, randomDirection, scaled } from "../vector.js";
 import { addResizeListener } from "../canvas-helpers.js";
@@ -20,7 +20,7 @@ function getAtomVelocity(mag: number, isRandomDirection: boolean): number[] {
 }
 
 function getNewAtom(width: number, height: number, isRandomDirection: boolean) {
-    const mag = (Math.random() - 0.5) * height;
+    const mag = (Math.random() - 0.5) * height * 2;
     return {
         position: [Math.random() * width, Math.random() * height],
         // Set the velocity to the height so that it is hitting once per iteration, like we said in the description.
@@ -65,16 +65,11 @@ function getElements() {
     if (!impulseCtx) {
         throw new Error("Failed to find element");
     }
-    const perAtomCtx = impulseCanvas.getContext("2d");
-    if (!perAtomCtx) {
-        throw new Error("Failed to find element");
-    }
 
     return {
         simulationCanvas,
         simCtx,
         impulseCtx,
-        perAtomCtx,
         randomDirectionToggle,
         widthInput,
         heightInput
@@ -92,11 +87,10 @@ export function initializeRandomDirectionSim() {
         impulseCtx,
         randomDirectionToggle,
         widthInput,
-        heightInput
+        heightInput,
     } = getElements();
 
     const sim = new Simulation(Math.floor(simulationCanvas.getBoundingClientRect().width / 2), Math.floor(simulationCanvas.getBoundingClientRect().height / 2));
-    console.log(sim.width);
 
     let isRandomDirection = false;
     randomDirectionToggle.addEventListener('change', () => {
@@ -110,11 +104,14 @@ export function initializeRandomDirectionSim() {
 
     handleCustomDimensions(sim, heightInput, widthInput);
     ensureSimAtomCount(sim, () => getNewAtom(sim.width, sim.height, isRandomDirection), atomCount);
-    // There should be a chart that says the pressure-per-atom.
 
     // We want to collect values for one second.
     const totalImpulse = new MovingAverage(1 / simulationPeriod);
     const totalImpulseAverage = new MovingAverage(10 / simulationPeriod);
+    const verticalImpulse = new MovingAverage(1 / simulationPeriod);
+    const verticalImpulseAverage = new MovingAverage(10 / simulationPeriod);
+    const horizontalImpulse = new MovingAverage(1 / simulationPeriod);
+    const horizontalImpulseAverage = new MovingAverage(10 / simulationPeriod);
 
     screenActiveInterval(() => {
         const result = sim.update(simulationPeriod, {
@@ -123,23 +120,31 @@ export function initializeRandomDirectionSim() {
             repulsiveness: 0,
         });
 
-        totalImpulse.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
-        totalImpulseAverage.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
+        totalImpulse.addItem(getPressure(sim, result));
+        totalImpulseAverage.addItem(getPressure(sim, result));
+        horizontalImpulse.addItem(getHorizontalPressure(sim, result));
+        horizontalImpulseAverage.addItem(getHorizontalPressure(sim, result));
+        verticalImpulse.addItem(getVerticalPressure(sim, result));
+        verticalImpulseAverage.addItem(getVerticalPressure(sim, result));
     }, simulationCanvas, simulationPeriod * 1000);
 
     screenActiveInterval(() => {
         renderBoxedSimulation(simulationCanvas, simCtx, sim);
     }, simulationCanvas, renderPeriod * 1000);
 
-    const chartData: number[][] = [[], []];
+    const chartData: number[][] = [[], [], [], [], [], []];
     const chartLabels: number[] = [];
-    const chart = initializeChart(impulseCtx, chartLabels, chartData, ['Live Data', 'Moving Average'], "Pressure ()", "Pressure vs. Time");
+    const chart = initializeChart(impulseCtx, chartLabels, chartData, ['Live Pressure', 'Average Pressure', 'Live Horizontal Pressure', 'Average Horizontal Pressure', 'Live Vertical Pressure', 'Average Vertical Pressure'], "Pressure ()", "Pressure vs. Time");
     const start = Date.now();
 
     screenActiveInterval(() => {
         const timePassed = Date.now() - start;
 
         chartLabels.push(Math.round(timePassed / 1000));
+        chartData[5].push(verticalImpulseAverage.getAverage());
+        chartData[4].push(verticalImpulse.getAverage());
+        chartData[3].push(horizontalImpulseAverage.getAverage());
+        chartData[2].push(horizontalImpulse.getAverage());
         chartData[1].push(totalImpulseAverage.getAverage());
         chartData[0].push(totalImpulse.getAverage());
         chart.update();

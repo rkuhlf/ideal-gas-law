@@ -26,12 +26,8 @@
           </div>
         </div>
         <sim-chart name="particle-model-sim-output"></sim-chart>
-        <!-- TODO: Pressure-per-area. -->
       </section>
 
-      <!-- Need graphs of pressure on either wall and the total "average force exerted" -->
-      <!-- Then when we get to the randomized part, we can say that this assumption is what gives us equal pressure on all of the walls. -->
-      <!-- And with that in mind, we can show the inverse correlation with volume. -->
       <p>It does get a little more interesting when we consider particles of different speed. If our particle was going 2 m/s, we would actually have 8 Pa, since each collision would have an impulse of 4 Ns, and they would happen twice as often. In general, we can say that pressure is actually proportional to velocity-squared. In fact, temperature is also defined to be proportional to particle velocity squared, so we have the reasoning for why pressure is proportional to temperature.</p>
       <p>However, it's all going to go haywire in a second, when we try to understand why pressure is inversely proportional to volume. Our particle is traveling straight up. If we decrease the volume towards zero by decreasing our rectangle's width, the ideal gas law would predict that pressure goes to infinity - but it doesn't, at least not in our simulation. So, something must be off. The trick is that particles don't go straight up. They go in completely random directions. So particles can also move left and right. For the rest of the article, I'll consider what happens in 2D, since that is where my sim takes place. The overall idea is that the general principles in 2D translate well to 3D. Note that in 2D land, our pressure is force-per-length, and our volume is replaced with area. Concretely, our pressure is in N/m instead of Pascals. Play around with the effect that random direction has on the sim below:</p>
 
@@ -45,12 +41,7 @@
           </div>
         </div>
         <sim-chart name="random-direction-sim-output"></sim-chart>
-        <sim-chart name="random-direction-sim-output"></sim-chart>
       </section>
-      <!-- TODO: Make this one resizeable as well. -->
-      <!-- TODO: This one should show the vertical, horizontal. -->
-      <!-- TODO: This one should show the total. -->
-      <!-- TODO: This one should show the pressure multiplied by the volume. -->
 
       <p>Assuming a particle starts with a speed <math-span>v</math-span> and <math-span>\theta</math-span> as the angle that the particle's path makes with the horizontal, we can still fairly easily compute the expected collisions per second. The horizontal speed of the particle is <math-span>v \cdot \cos{\theta}</math-span>, and with <math-span>w</math-span> and <math-span>h</math-span> for width and height, <math-span>\tfrac{v \cdot \cos{\theta}}{w}</math-span> is the number of collisions-per-second against vertical walls. Likewise, <math-span>\tfrac{v \cdot \sin{\theta}}{h}</math-span> is the number of collisisons-per-second on the horizontal walls. Note that collisions against vertical walls now have <math-span>2v \cdot \cos{\theta} \text{Ns}</math-span>worth of impulse, and likewise collisions on horizontal walls have<math-span>2v \cdot \sin{\theta} \text{Ns}</math-span> worth of impulse. In total, our expected impulse per second (better thought of as time-averaged force on the container) will be</p>
       <math-block>

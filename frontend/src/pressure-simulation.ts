@@ -142,6 +142,19 @@ export class Simulation {
   }
 }
 
+export function getPressure(sim: Simulation, res: SimulationResult) {
+  const totalPerimeter = (sim.width + sim.height) * 2;
+  return (res.totalHorizontalImpulse + res.totalVerticalImpulse) / totalPerimeter;
+}
+
+export function getHorizontalPressure(sim: Simulation, res: SimulationResult) {
+  return res.totalHorizontalImpulse / (sim.height * 2);
+}
+
+export function getVerticalPressure(sim: Simulation, res: SimulationResult) {
+  return res.totalVerticalImpulse / (sim.width * 2);
+}
+
 interface PEConstants {
   repulsiveness: number;
   minDistance: number;

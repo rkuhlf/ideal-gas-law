@@ -146,6 +146,7 @@ article > p {
 
 .sim-chart {
   width: 100%;
+  min-height: 40vh;
   height: 100%;
   padding: 15px;
 }

@@ -6,6 +6,7 @@ import { randomDirection, scaled } from "../vector.js";
 import { PressureChart } from "./pressure-chart.js";
 import { addResizeListener as synchronizeCanvasDimensions } from "../canvas-helpers.js";
 import { handleCustomDimensions } from "./input-handlers.js";
+import { initializeChart } from "../chart.js";
 
 function getNewAtom(width: number, height: number) {
     // const mag = (Math.random() - 0.5) * height;
@@ -126,17 +127,19 @@ export function initializeCustomDimensionSim() {
     }, simulationCanvas, renderPeriod * 1000);
 
     const timesAreaChartData: number[][] = [[], []];
-    // const timesAreaChart = initializeChart(timesAreaCtx, chartLabels, timesAreaChartData, ['Live Data', 'Moving Average'], "Pressure * Area ()", "Pressure * Area vs. Time");
+    const chartLabels: number[] = [];
+    const timesAreaChart = initializeChart(timesAreaCtx, chartLabels, timesAreaChartData, ['Live Data', 'Moving Average'], "Pressure * Area ()", "Pressure * Area vs. Time");
     const start = Date.now();
 
     screenActiveInterval(() => {
-
         pressureChart.update();
 
-
-        // timesAreaChartData[1].push(timesAreaAverage.getAverage());
-        // timesAreaChartData[0].push(timesArea.getAverage());
-        // timesAreaChart.update();
+        const timePassed = Date.now() - start;
+    
+        chartLabels.push(Math.round(timePassed / 1000));    
+        timesAreaChartData[1].push(timesAreaAverage.getAverage());
+        timesAreaChartData[0].push(timesArea.getAverage());
+        timesAreaChart.update();
     }, simulationCanvas, 1000);
 
     synchronizeCanvasDimensions(simulationCanvas);

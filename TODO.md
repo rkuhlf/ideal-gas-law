@@ -1,11 +1,8 @@
 
-
-1. Fix the problem with the pressure-per-side.
-
-1. Clean up the graphs.
-    - **Add all of the ones I'm supposed to have.**
 1. Clean up the writing.
 1. Make everything mathJax.
+
+1. I should probably be dividing by the perimeter if I even want to advertise this as a pressure.
 
 1. Make a nice title. Something with a photo of van der waal.
 

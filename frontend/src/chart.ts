@@ -3,9 +3,12 @@ import { Chart } from "chart.js/auto";
 
 export function initializeChart(ctx: CanvasRenderingContext2D, labels: number[], datasets: number[][], legend: string[], yLabel: string, title: string): Chart {
   const colors = [
-    [0, 0, 255],
-    [200, 50, 50],
-    [50, 200, 50],
+    [0, 0, 150],
+    [100, 100, 255],
+    [150, 0, 0],
+    [255, 100, 100],
+    [0, 150, 0],
+    [100, 255, 100],
   ]
   const datasetsWithSettings = datasets.map((data: number[], i: number) => {
     return {
