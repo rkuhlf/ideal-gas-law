@@ -30,6 +30,24 @@ export function renderSimulation(canvas: HTMLCanvasElement, ctx: CanvasRendering
   // ctx.closePath();
 }
 
+export function renderBoxedSimulation(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, sim: Simulation) {
+  const topLeftX = canvas.width / 2 - sim.width / 2
+    const topLeftY = canvas.height / 2 - sim.height / 2
+    renderSimulation(canvas, ctx, sim, [
+        topLeftX,
+        topLeftY,
+    ]);
+
+    ctx.strokeStyle = 'rgb(0, 0, 0)';
+    const offset = 10;
+    ctx.lineWidth = 5;
+    ctx.strokeRect(
+        topLeftX - offset / 2,
+        topLeftY - offset / 2,
+        sim.width + offset,
+        sim.height + offset);
+}
+
 
 function drawAtom(ctx: CanvasRenderingContext2D, atom: Atom, offset: number[]= [0, 0]) {
   // Draw a single dot

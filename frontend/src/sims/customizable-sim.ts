@@ -2,7 +2,7 @@ import { screenActiveInterval } from "../canvas-helpers.js";
 import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
 import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
-import { renderSimulation } from "../render-simulation.js";
+import { renderBoxedSimulation, renderSimulation } from "../render-simulation.js";
 import { addResizeListener } from "../canvas-helpers.js";
 import { handleCustomDimensions } from "./input-handlers.js";
 import { Atom } from "../atom.js";
@@ -113,8 +113,9 @@ export function initializeCustomizableSim() {
     constantFactorInput,
   } = getElements();
 
-  const sim = new Simulation(Math.floor(simulationCanvas.getBoundingClientRect().width / 2), Math.floor(simulationCanvas.getBoundingClientRect().height / 2));
   addResizeListener(simulationCanvas);
+
+  const sim = new Simulation(Math.floor(simulationCanvas.getBoundingClientRect().width / 2), Math.floor(simulationCanvas.getBoundingClientRect().height / 2));
   handleCustomDimensions(sim, heightInput, widthInput);
 
   atomCountInput.valueAsNumber = 50;
@@ -151,22 +152,7 @@ export function initializeCustomizableSim() {
   }, simulationCanvas, simulationPeriod * 1000);
 
   screenActiveInterval(() => {
-    const topLeftX = simulationCanvas.width / 2 - sim.width / 2
-    const topLeftY = simulationCanvas.height / 2 - sim.height / 2
-    renderSimulation(simulationCanvas, simCtx, sim, [
-        topLeftX,
-        topLeftY,
-    ]);
-
-    simCtx.strokeStyle = 'rgb(0, 0, 0)';
-    const offset = 10;
-    simCtx.lineWidth = 5;
-    simCtx.strokeRect(
-        topLeftX - offset / 2,
-        topLeftY - offset / 2,
-        sim.width + offset,
-        sim.height + offset);
-
+    renderBoxedSimulation(simulationCanvas, simCtx, sim);
   }, simulationCanvas, renderPeriod * 1000);
 
   const chartData: number[][] = [[], [], []];

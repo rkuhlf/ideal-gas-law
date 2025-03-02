@@ -2,13 +2,18 @@ import { screenActiveInterval } from "../canvas-helpers.js";
 import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
 import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
-import { renderSimulation } from "../render-simulation.js";
+import { renderBoxedSimulation, renderSimulation } from "../render-simulation.js";
 import { magnitude, randomDirection, scaled } from "../vector.js";
 import { addResizeListener } from "../canvas-helpers.js";
+import { handleCustomDimensions } from "./input-handlers.js";
 
 function getAtomVelocity(mag: number, isRandomDirection: boolean): number[] {
     if (!isRandomDirection) {
-        return [0, mag];
+        if (Math.random() < 0.5)  {
+            return [0, -mag];
+        } else {
+            return [0, mag];
+        }
     }
 
     return scaled(randomDirection(), mag);
@@ -27,6 +32,8 @@ function getElements() {
     const simulationCanvas = document.getElementById("random-direction-sim");
     const impulseCanvas = document.getElementById("random-direction-sim-output");
     const randomDirectionToggle = document.getElementById("random-direction");
+    const widthInput = document.getElementById("random-width-input");
+    const heightInput = document.getElementById("random-height-input");
 
     if (!(simulationCanvas instanceof HTMLCanvasElement)) {
         console.error("Could not find canvas");
@@ -38,6 +45,14 @@ function getElements() {
     }
 
     if (!(randomDirectionToggle instanceof HTMLInputElement)) {
+        throw new Error("Failed to find element");
+    }
+
+    if (!(widthInput instanceof HTMLInputElement)) {
+        throw new Error("Failed to find element");
+    }
+    
+    if (!(heightInput instanceof HTMLInputElement)) {
         throw new Error("Failed to find element");
     }
 
@@ -61,6 +76,8 @@ function getElements() {
         impulseCtx,
         perAtomCtx,
         randomDirectionToggle,
+        widthInput,
+        heightInput
     }
 }
 
@@ -73,12 +90,13 @@ export function initializeRandomDirectionSim() {
         simulationCanvas,
         simCtx,
         impulseCtx,
-        randomDirectionToggle
+        randomDirectionToggle,
+        widthInput,
+        heightInput
     } = getElements();
 
-    const width = simulationCanvas.width;
-    const height = simulationCanvas.height;
-    const sim = new Simulation(width, height);
+    const sim = new Simulation(Math.floor(simulationCanvas.getBoundingClientRect().width / 2), Math.floor(simulationCanvas.getBoundingClientRect().height / 2));
+    console.log(sim.width);
 
     let isRandomDirection = false;
     randomDirectionToggle.addEventListener('change', () => {
@@ -90,7 +108,8 @@ export function initializeRandomDirectionSim() {
         }
     })
 
-    ensureSimAtomCount(sim, () => getNewAtom(width, height, isRandomDirection), atomCount);
+    handleCustomDimensions(sim, heightInput, widthInput);
+    ensureSimAtomCount(sim, () => getNewAtom(sim.width, sim.height, isRandomDirection), atomCount);
     // There should be a chart that says the pressure-per-atom.
 
     // We want to collect values for one second.
@@ -109,7 +128,7 @@ export function initializeRandomDirectionSim() {
     }, simulationCanvas, simulationPeriod * 1000);
 
     screenActiveInterval(() => {
-        renderSimulation(simulationCanvas, simCtx, sim);
+        renderBoxedSimulation(simulationCanvas, simCtx, sim);
     }, simulationCanvas, renderPeriod * 1000);
 
     const chartData: number[][] = [[], []];
@@ -126,5 +145,5 @@ export function initializeRandomDirectionSim() {
         chart.update();
     }, simulationCanvas, 1000);
 
-    addResizeListener(simulationCanvas, sim.resize.bind(sim));
+    addResizeListener(simulationCanvas);
 }
