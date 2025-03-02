@@ -62,17 +62,17 @@
       
       <h2>Customize Your Own Simulation</h2>
       <section class="sim-section">
-        <canvas class="sim-canvas" id="customizable-sim" width="1000" height="1000"></canvas>
-        <div class="input-box">
-          <labeled-input label="Atoms" name="atom-count"></labeled-input>
-          <labeled-input label="Temperature" name="temperature-input"></labeled-input>
-          <labeled-input label="Width" name="custom-sim-width-input"></labeled-input>
-          <labeled-input label="Height" name="custom-sim-height-input"></labeled-input>
-          <labeled-input label="Constant Factor" name="constant-input"></labeled-input>
+        <div class="sim-with-inputs">
+          <canvas class="sim-canvas" id="customizable-sim" width="1000" height="1000"></canvas>
+          <div class="input-box">
+            <labeled-input label="Atoms" name="atom-count"></labeled-input>
+            <labeled-input label="Temperature" name="temperature-input"></labeled-input>
+            <labeled-input label="Width" name="custom-sim-width-input"></labeled-input>
+            <labeled-input label="Height" name="custom-sim-height-input"></labeled-input>
+            <labeled-input label="Coefficient" name="constant-input"></labeled-input>
+          </div>
         </div>
-        <div>
-          <canvas id="customizable-sim-output" width="400" height="200"></canvas>
-        </div>
+        <sim-chart name="customizable-sim-output"></sim-chart>
         </section>
     </article>
 
