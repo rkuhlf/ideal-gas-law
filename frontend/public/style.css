@@ -4,10 +4,6 @@
   box-sizing: border-box;
 }
 
-canvas {
-  width: 80vmin;
-}
-
 /* General Styles */
 body {
   font-family: 'Arial', sans-serif;
@@ -28,21 +24,6 @@ h1 {
 
 p, label {
   margin: 0 20px;
-}
-
-/* Canvas Styling */
-canvas {
-  display: block;
-  margin: 20px auto;
-  background-color: #ffffff;
-  border: 2px solid #4a90e2;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-}
-
-.sim-canvas {
-  width: 50vw;
-  height: 80vh;
 }
 
 /* Button Styling */
@@ -81,13 +62,51 @@ input[type="number"]:focus {
   border-color: #4a90e2;
 }
 
-/* Labels */
 label {
   font-size: 1rem;
   margin-right: 10px;
 }
 
-/* Section Headers */
+.input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.input-box label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.input-box input[type='number'] {
+  padding: 8px;
+  padding-right: 2px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+  outline: none;
+  font-size: 16px;
+  width: 100%;
+  width: 5rem;
+}
+
+.input-box input[type='number']:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.input-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 h2 {
   text-align: center;
   color: #333;
@@ -95,18 +114,35 @@ h2 {
   margin-top: 40px;
 }
 
-/* Customize Simulation Section */
-#custom-dimension-sim, #customizable-sim {
-  margin-top: 30px;
-}
-
-#customizable-sim-output, #custom-dimension-output, #custom-dimension-output-per-area {
-  margin-top: 10px;
-}
-
 footer {
   text-align: center;
   margin: 40px 0 20px;
   font-size: 0.9rem;
   color: #777;
+}
+
+
+.sim-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 16px;
+}
+
+.sim-section > * {
+  display: block;
+  background-color: #ffffff;
+  border: 2px solid #4a90e2;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+
+  /* width: 100%; */
+  width: 100% !important;  /* Ensure the canvas expands */
+  height: auto !important; /* Maintain aspect ratio */
+  min-width: 200px;
+}
+
+article {
+  margin: 0 auto;
+  width: 80vw;
+  padding: 20px;
 }

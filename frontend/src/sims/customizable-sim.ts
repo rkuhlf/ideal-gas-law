@@ -39,7 +39,7 @@ function getElements() {
   const atomCountInput = document.getElementById("atom-count");
   const constantFactorInput = document.getElementById("constant-input");
   const heightInput = document.getElementById("custom-sim-height-input");
-  const widthInput = document.getElementById("costum-sim-width-input");
+  const widthInput = document.getElementById("custom-sim-width-input");
   const temperatureInput = document.getElementById("temperature-input");
 
   if (!(simulationCanvas instanceof HTMLCanvasElement)) {

@@ -53,7 +53,9 @@ export function initializeChart(ctx: CanvasRenderingContext2D, labels: number[],
           },
           min: 0,
         }
-      }
+      },
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }

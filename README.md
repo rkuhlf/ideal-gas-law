@@ -14,6 +14,8 @@ So repulsiveness should have been a property of some kind of simulator settings 
 
 Unfortunately it only made sense to have a simulation class whenever there was also a grid that needed to be kept in sync, so no there's just a pointless simulation class.
 
+
+
 ### Commands
 - Build go: GOARCH=wasm GOOS=js go build -o ../public/wasm/main.wasm
 

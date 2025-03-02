@@ -11,67 +11,70 @@
   <body>
     <h1>What is Van der Waal's Equation?</h1>
 
-    In school, we learn that <span class="math">PV = nRT</span>. That's neat I guess: we get a function for pressure as being proportional to number of moles, <span class="math">n</span>, multiplied by temperature, and divided by volume. Explicitly, <span class="math">P = c \cdot \frac{nT}{V}</span>, where <span class="math">c</span> happens to be the constant <span class="math">8.314 \frac{\text{J}}{\text{K} \cdot \text{mol}}</span> in the real world, which we call <span class="math">R</span>. This equation is justified by imagining the force exerted by a particle on the walls of an enclosing chamber, considering temperature as a sort of analog for speed. If we had a single particle weighing a kilogram (humor me) in a 1m by 1m by 1m box, moving 1m/s straight up, we could easily calculate the force it exerts on the outer wall. Assuming elastic collisions, the particle has a change in impulse with the wall of 2 m/s * kg every second. However, as the number of particles increases, the collisions against the walls will go from a 2m/s * kg change every second, to a constant hammering of 2kg m/s^2 = 2 Newton. Converting to a pressure, we have our single massive particle, with its collision assumed to be spread out over time, generating a thid of a pascal of pressure. And if there were two, we would have two-thirds of a pascal of pressure - it's fairly easy to see that assuming particles have no interaction, the force exerted on the wall is directly proportional to the number of particles. Verify for yourself below:
-
-    <!-- You can adjust number of particles and speed. -->
-    <canvas class="sim-canvas" id="particle-model-sim" width="1000" height="1000"></canvas>
-    <button id="add-atom">Add atom</button>
-    <canvas id="particle-model-sim-output" width="400" height="200"></canvas>
-
-    <!-- Need graphs of pressure on either wall and the total "average force exerted" -->
-    <!-- Then when we get to the randomized part, we can say that this assumption is what gives us equal pressure on all of the walls. -->
-    <!-- And with that in mind, we can show the inverse correlation with volume. -->
-
-    It does get a little more interesting when we consider particles of different speed. If our particle was going 2 m/s, we would actually have 8 Pa, since each collision would have an impulse of 4 Ns, and they would happen twice as often. In general, we can say that pressure is actually proportional to velocity-squared. In fact, temperature is also defined to be proportional to particle velocity squared, so we have the reasoning for why pressure is proportional to temperature.
-
-    However, it's all going to go haywire in a second, when we try to understand why pressure is inversely proportional to volume. Our particle is traveling straight up. If we decrease the volume towards zero by decreasing our rectangle's width, the ideal gas law would predict that pressure goes to infinity - but it doesn't, at least not in our simulation. So, something must be off. The trick is that particles don't go straight up. They go in completely random directions. So particles can also move left and right. For the rest of the article, I'll consider what happens in 2D, since that is where my sim takes place. The overall idea is that the general principles in 2D translate well to 3D. Note that in 2D land, our pressure is force-per-length, and our volume is replaced with area. Concretely, our pressure is in N/m instead of Pascals. Play around with the effect that random direction has on the sim below:
-
-    <canvas class="sim-canvas" id="random-direction-sim" width="1000" height="1000"></canvas>
-    <input type="checkbox" id="random-direction" /><label for="random-direction">Randomize direction</label>
-    <!-- TODO: Make this one resizeable as well. -->
-    <!-- TODO: This one should show the vertical, horizontal. -->
-    <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
-    <!-- TODO: This one should show the total. -->
-    <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
-    <!-- TODO: This one should show the pressure multiplied by the volume. -->
-
-    Assuming a particle starts with a speed <span class="math">v</span> and <span class="math">\theta</span> as the angle that the particle's path makes with the horizontal, we can still fairly easily compute the expected collisions per second. The horizontal speed of the particle is <span class="math">v \cdot \cos{\theta}</span>, and with <span class="math">w</span> and <span class="math">h</span> for width and height, <span class="math">\frac{v \cdot \cos{\theta}}{w}</span> is the number of collisions-per-second against vertical walls. Likewise, <span class="math">\frac{v \cdot \sin{\theta}}{h}</span> is the number of collisisons-per-second on the horizontal walls. Note that collisions against vertical walls now have <span class="math">2v \cdot \cos{\theta} \text{Ns}</span>worth of impulse, and likewise collisions on horizontal walls have<span class="math">2v \cdot \sin{\theta} \text{Ns}</span> worth of impulse. In total, our expected impulse per second (better thought of as time-averaged force on the container) will be
-
-    <div class="math">
-      \frac{v \cdot \cos{\theta}}{w} \text{s}^{-1} \cdot (2v \cdot \cos{\theta}) \text{Ns} + \frac{v \cdot \sin{\theta}}{h} \text{s}^{-1} 2v \cdot \sin{\theta} \text{Ns} = 2v^2 \left( \frac{\cos^2{\theta}}{w} + \frac{\sin^2{\theta}}{h} \right)  \text{N}
-    </div>
-
-    Yay! We have a huge equation... Dividing the area over which our force is exerted to get our 2D version of pressure, we have <span class="math">P = v^2 \left( \frac{\cos^2{\theta}}{w(w + h)} + \frac{\sin^2{\theta}}{h(w + h)} \right)  \text{N/m}</span> Although it's briefly troubling that we don't have a nice <span class="math">wh</span> in the denominator, we can resolve it by recalling that we don't care about a single particle - we care about what particles will do on expectation. With our expected values for <span class="math">\theta</span> spread evenly across all angles, we can skip a bit of calculus to conclude that <span class="math">\cos^2{\theta}</span> is on average <span class="math">1/2</span>, and likewise for <span class="math">\sin^2{\theta}</span>. If we go ahead and plug those expected values in, everything cancels nicely to reveal
-
-    <div class="math">
-      P = \frac{v^2}{2wh} \ \text{N/m}.
-    </div>
-
-    Hurrah, we finally have the inverse-area relationship we've been after. Check out the sim below to see for yourself.
-
-    <canvas class="sim-canvas" id="custom-dimension-sim" width="1000" height="1000"></canvas>
-    <label for="width-input">Width</label><input type="number" name="width" id="width-input">
-    <label for="height-input">Height</label><input type="number" name="height" id="height-input">
-    <canvas id="custom-dimension-output" width="400" height="200"></canvas>
-    <canvas id="custom-dimension-output-per-area" width="400" height="200"></canvas>
-
-    Now that we've finally shown the inverse-area relationship, we can combine our proportionality rules into a single equation: <span class="math">P = c \cdot \frac{nT}{A}</span>. Seems pretty familiar... Play around with the simulation and see if you can figure out what <span class="math">c</span> is for this simulation.
-
-    <!-- Notes -->
-    <!-- Assumed box, can be generalized using rotation and calculus. -->
-    
-
-    <h2>Customize Your Own Simulation</h2>
-    <canvas class="sim-canvas" id="customizable-sim" width="1000" height="1000"></canvas>
-    <canvas id="customizable-sim-output" width="400" height="200"></canvas>
-    <label for="atom-count">Atoms</label><input type="number" name="atoms" id="atom-count" />
-    <label for="temperature-input">Temperature</label><input type="number" name="temperature" id="temperature-input" />
-    <label for="costum-sim-width-input">Width</label><input type="number" name="width" id="costum-sim-width-input">
-    <label for="custom-sim-height-input">Height</label><input type="number" name="height" id="custom-sim-height-input">
-    <label for="constant-input">Constant Factor</label><input type="number" name="constant-factor" id="constant-input">
-    <!-- TODO: Add graph showing the predicted pressure vs the actual pressure. -->
-    <canvas id="custom-sim-output" width="400" height="200"></canvas>
-
+    <article>
+      In school, we learn that <span class="math">PV = nRT</span>. That's neat I guess: we get a function for pressure as being proportional to number of moles, <span class="math">n</span>, multiplied by temperature, and divided by volume. Explicitly, <span class="math">P = c \cdot \frac{nT}{V}</span>, where <span class="math">c</span> happens to be the constant <span class="math">8.314 \frac{\text{J}}{\text{K} \cdot \text{mol}}</span> in the real world, which we call <span class="math">R</span>. This equation is justified by imagining the force exerted by a particle on the walls of an enclosing chamber, considering temperature as a sort of analog for speed. If we had a single particle weighing a kilogram (humor me) in a 1m by 1m by 1m box, moving 1m/s straight up, we could easily calculate the force it exerts on the outer wall. Assuming elastic collisions, the particle has a change in impulse with the wall of 2 m/s * kg every second. However, as the number of particles increases, the collisions against the walls will go from a 2m/s * kg change every second, to a constant hammering of 2kg m/s^2 = 2 Newton. Converting to a pressure, we have our single massive particle, with its collision assumed to be spread out over time, generating a thid of a pascal of pressure. And if there were two, we would have two-thirds of a pascal of pressure - it's fairly easy to see that assuming particles have no interaction, the force exerted on the wall is directly proportional to the number of particles. Verify for yourself below:
+      <!-- You can adjust number of particles and speed. -->
+      <canvas class="sim-canvas" id="particle-model-sim" width="1000" height="1000"></canvas>
+      <button id="add-atom">Add atom</button>
+      <div>
+        <canvas id="particle-model-sim-output" width="400" height="200"></canvas>
+      </div>
+      <!-- Need graphs of pressure on either wall and the total "average force exerted" -->
+      <!-- Then when we get to the randomized part, we can say that this assumption is what gives us equal pressure on all of the walls. -->
+      <!-- And with that in mind, we can show the inverse correlation with volume. -->
+      It does get a little more interesting when we consider particles of different speed. If our particle was going 2 m/s, we would actually have 8 Pa, since each collision would have an impulse of 4 Ns, and they would happen twice as often. In general, we can say that pressure is actually proportional to velocity-squared. In fact, temperature is also defined to be proportional to particle velocity squared, so we have the reasoning for why pressure is proportional to temperature.
+      However, it's all going to go haywire in a second, when we try to understand why pressure is inversely proportional to volume. Our particle is traveling straight up. If we decrease the volume towards zero by decreasing our rectangle's width, the ideal gas law would predict that pressure goes to infinity - but it doesn't, at least not in our simulation. So, something must be off. The trick is that particles don't go straight up. They go in completely random directions. So particles can also move left and right. For the rest of the article, I'll consider what happens in 2D, since that is where my sim takes place. The overall idea is that the general principles in 2D translate well to 3D. Note that in 2D land, our pressure is force-per-length, and our volume is replaced with area. Concretely, our pressure is in N/m instead of Pascals. Play around with the effect that random direction has on the sim below:
+      <canvas class="sim-canvas" id="random-direction-sim" width="1000" height="1000"></canvas>
+      <input type="checkbox" id="random-direction" /><label for="random-direction">Randomize direction</label>
+      <!-- TODO: Make this one resizeable as well. -->
+      <!-- TODO: This one should show the vertical, horizontal. -->
+      <div>
+        <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
+      </div>
+      <!-- TODO: This one should show the total. -->
+      <div>
+        <canvas id="random-direction-sim-output" width="400" height="200"></canvas>
+      </div>
+      <!-- TODO: This one should show the pressure multiplied by the volume. -->
+      Assuming a particle starts with a speed <span class="math">v</span> and <span class="math">\theta</span> as the angle that the particle's path makes with the horizontal, we can still fairly easily compute the expected collisions per second. The horizontal speed of the particle is <span class="math">v \cdot \cos{\theta}</span>, and with <span class="math">w</span> and <span class="math">h</span> for width and height, <span class="math">\frac{v \cdot \cos{\theta}}{w}</span> is the number of collisions-per-second against vertical walls. Likewise, <span class="math">\frac{v \cdot \sin{\theta}}{h}</span> is the number of collisisons-per-second on the horizontal walls. Note that collisions against vertical walls now have <span class="math">2v \cdot \cos{\theta} \text{Ns}</span>worth of impulse, and likewise collisions on horizontal walls have<span class="math">2v \cdot \sin{\theta} \text{Ns}</span> worth of impulse. In total, our expected impulse per second (better thought of as time-averaged force on the container) will be
+      <div class="math">
+        \frac{v \cdot \cos{\theta}}{w} \text{s}^{-1} \cdot (2v \cdot \cos{\theta}) \text{Ns} + \frac{v \cdot \sin{\theta}}{h} \text{s}^{-1} 2v \cdot \sin{\theta} \text{Ns} = 2v^2 \left( \frac{\cos^2{\theta}}{w} + \frac{\sin^2{\theta}}{h} \right)  \text{N}
+      </div>
+      Yay! We have a huge equation... Dividing the area over which our force is exerted to get our 2D version of pressure, we have <span class="math">P = v^2 \left( \frac{\cos^2{\theta}}{w(w + h)} + \frac{\sin^2{\theta}}{h(w + h)} \right)  \text{N/m}</span> Although it's briefly troubling that we don't have a nice <span class="math">wh</span> in the denominator, we can resolve it by recalling that we don't care about a single particle - we care about what particles will do on expectation. With our expected values for <span class="math">\theta</span> spread evenly across all angles, we can skip a bit of calculus to conclude that <span class="math">\cos^2{\theta}</span> is on average <span class="math">1/2</span>, and likewise for <span class="math">\sin^2{\theta}</span>. If we go ahead and plug those expected values in, everything cancels nicely to reveal
+      <div class="math">
+        P = \frac{v^2}{2wh} \ \text{N/m}.
+      </div>
+      Hurrah, we finally have the inverse-area relationship we've been after. Check out the sim below to see for yourself.
+      <section class="sim-section">
+        <canvas class="sim-canvas" id="custom-dimension-sim" width="1000" height="1000"></canvas>
+        <label for="width-input">Width</label><input type="number" name="width" id="width-input">
+        <label for="height-input">Height</label><input type="number" name="height" id="height-input">
+        <div>
+          <canvas id="custom-dimension-output" width="400" height="200"></canvas>
+        </div>
+        <div>
+          <canvas id="custom-dimension-output-per-area" width="400" height="200"></canvas>
+        </div>
+      </section>
+      Now that we've finally shown the inverse-area relationship, we can combine our proportionality rules into a single equation: <span class="math">P = c \cdot \frac{nT}{A}</span>. Seems pretty familiar... Play around with the simulation and see if you can figure out what <span class="math">c</span> is for this simulation.
+      <!-- Notes -->
+      <!-- Assumed box, can be generalized using rotation and calculus. -->
+      
+      <h2>Customize Your Own Simulation</h2>
+      <section class="sim-section">
+        <canvas class="sim-canvas" id="customizable-sim" width="1000" height="1000"></canvas>
+        <div class="input-box">
+          <labeled-input label="Atoms" name="atom-count"></labeled-input>
+          <labeled-input label="Temperature" name="temperature-input"></labeled-input>
+          <labeled-input label="Width" name="custom-sim-width-input"></labeled-input>
+          <labeled-input label="Height" name="custom-sim-height-input"></labeled-input>
+          <labeled-input label="Constant Factor" name="constant-input"></labeled-input>
+        </div>
+        <div>
+          <canvas id="customizable-sim-output" width="400" height="200"></canvas>
+        </div>
+        </section>
+    </article>
 
     <script type="module" src="/src/main.ts"></script>
   </body>
