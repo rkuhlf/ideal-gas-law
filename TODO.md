@@ -2,8 +2,6 @@
 1. Clean up the writing.
 1. Make everything mathJax.
 
-1. I should probably be dividing by the perimeter if I even want to advertise this as a pressure.
-
 ## Other Sims
 1. Rename to particle sims so that I can make some more pages and reuse the same infrastructure when I build other similar sims.
 

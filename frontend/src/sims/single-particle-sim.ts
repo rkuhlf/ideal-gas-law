@@ -1,7 +1,7 @@
 import { screenActiveInterval } from "../canvas-helpers.js";
 import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
-import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
+import { Simulation, ensureSimAtomCount, getPressure } from "../pressure-simulation.js";
 import { renderSimulation } from "../render-simulation.js";
 import { addResizeListener } from "../canvas-helpers.js";
 
@@ -69,7 +69,6 @@ export function initializeParticleSim() {
         simulationCanvas,
         simCtx,
         impulseCtx,
-        perAtomCtx,
         atomCountInput,
     } = getElements();
 
@@ -95,8 +94,8 @@ export function initializeParticleSim() {
             repulsiveness: 0,
         });
 
-        totalImpulse.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
-        totalImpulseAverage.addItem(result.totalHorizontalImpulse + result.totalVerticalImpulse);
+        totalImpulse.addItem(getPressure(sim, result));
+        totalImpulseAverage.addItem(getPressure(sim, result));
     }, simulationCanvas, simulationPeriod * 1000);
 
     screenActiveInterval(() => {
