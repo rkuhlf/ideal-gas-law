@@ -1,7 +1,6 @@
 import { Atom, updateAtom } from "./atom.js";
 import { Grid } from "./grid.js";
-import { gaussianRandom } from "./math-helpers.js";
-import { added, dist, magnitude, normalized, scaled } from "./vector.js";
+import { dist, magnitude, scaled } from "./vector.js";
 
 export type SimulationResult = {
   totalHorizontalImpulse: number;
@@ -58,7 +57,6 @@ export class Simulation {
     // We update only after we have calculated the initial state, that way every force has an equal and opposite reaction since everything is calculated from the same state.
     for (let i = 0; i < this.atoms.length; i++) {
       const atom = this.atoms[i];
-      const [prevX, prevY] = atom.position;
       updateAtom(atom, accelerations[i], timeStep);
 
       // Handle collisions with the wall.
@@ -85,8 +83,6 @@ export class Simulation {
         atom.position[1] = 0;
         totalVerticalImpulse += Math.abs(atom.velocity[1]) * 2;
       }
-
-      // this.grid.moveItem(atom, prevX, prevY, atom.position[0], atom.position[1]);
     }
 
     // After all of the this.atoms have moved, we can adjust all of their velocities so their total energy remains correct.
@@ -183,67 +179,6 @@ function getEnergy(atom: Atom, atoms: Atom[], constants: PEConstants): number {
   return 1 / 2 * Math.pow(magnitude(atom.velocity), 2) + getPotentialEnergy(atom, atoms, constants)
 }
 
-function getTotalEnergy(atoms: Atom[], constants: PEConstants): number {
-  let energy = 0;
-
-  for (const atom of atoms) {
-    energy += getEnergy(atom, atoms, constants);
-  }
-
-  return energy;
-}
-
-// Re-normalize energies. Sometimes excessive energy gain occurs due to numerical inconsistencies.
-// Modifies the atoms.
-function normalizeToEnergy(atoms: Atom[], energy: number) {
-
-}
-
-function getRandomAcceleration(meanMagnitude: number): number[] {
-  const angle = Math.random() * Math.PI * 2;
-  const magnitude = gaussianRandom() * meanMagnitude;
-  const randomAcceleration = [Math.cos(angle) * magnitude, Math.sin(angle) * magnitude];
-  return randomAcceleration;
-}
-
-function getRepulsionAcceleration(atom: Atom, atoms: Atom[], constants: PEConstants): number[] {
-  let netAcceleration = [0, 0];
-
-  for (const otherAtom of atoms) {
-    if (otherAtom == atom) {
-      continue;
-    }
-
-    const repulsiveForce = getRepulsionMagnitude(atom, otherAtom, constants.minDistance) * constants.repulsiveness;
-
-    let direction = [atom.position[0] - otherAtom.position[0], atom.position[1] - otherAtom.position[1]];
-    let unitDirection;
-    // If they are right on top of each other, we choose a random direction. This is a numerical deficiency that real life doesn't half to deal with.
-    if (magnitude(direction) == 0) {
-      const angle = Math.random() * 2 * Math.PI;
-      unitDirection = [Math.cos(angle), Math.sin(angle)];
-    } else {
-      unitDirection = normalized(direction);
-    }
-
-    netAcceleration = added(netAcceleration, scaled(unitDirection, repulsiveForce));
-    if (isNaN(netAcceleration[0])) {
-      console.error("Could not compute repulsion acceleration", atom, otherAtom, repulsiveForce, direction);
-      return [0, 0];
-    }
-  }
-
-  return netAcceleration;
-}
-
-function getRepulsionMagnitude(atom1: Atom, atom2: Atom, minDistance: number): number {
-  let distance = dist(atom1.position, atom2.position);
-  distance = Math.max(distance, minDistance);
-
-  return 1 / Math.pow(distance, 2);
-}
-
-
 export function ensureSimAtomCount(sim: Simulation, spawner: () => Atom, count: number) {
   while (count > sim.getAtoms().length) {
     sim.addAtom(spawner());
@@ -253,3 +188,67 @@ export function ensureSimAtomCount(sim: Simulation, spawner: () => Atom, count: 
     sim.removeAtom();
   }
 }
+
+
+
+
+// Previous implementation of potential energies.
+// function getTotalEnergy(atoms: Atom[], constants: PEConstants): number {
+//   let energy = 0;
+
+//   for (const atom of atoms) {
+//     energy += getEnergy(atom, atoms, constants);
+//   }
+
+//   return energy;
+// }
+
+// // Re-normalize energies. Sometimes excessive energy gain occurs due to numerical inconsistencies.
+// // Modifies the atoms.
+// function normalizeToEnergy(atoms: Atom[], energy: number) {
+
+// }
+
+// function getRandomAcceleration(meanMagnitude: number): number[] {
+//   const angle = Math.random() * Math.PI * 2;
+//   const magnitude = gaussianRandom() * meanMagnitude;
+//   const randomAcceleration = [Math.cos(angle) * magnitude, Math.sin(angle) * magnitude];
+//   return randomAcceleration;
+// }
+
+// function getRepulsionAcceleration(atom: Atom, atoms: Atom[], constants: PEConstants): number[] {
+//   let netAcceleration = [0, 0];
+
+//   for (const otherAtom of atoms) {
+//     if (otherAtom == atom) {
+//       continue;
+//     }
+
+//     const repulsiveForce = getRepulsionMagnitude(atom, otherAtom, constants.minDistance) * constants.repulsiveness;
+
+//     let direction = [atom.position[0] - otherAtom.position[0], atom.position[1] - otherAtom.position[1]];
+//     let unitDirection;
+//     // If they are right on top of each other, we choose a random direction. This is a numerical deficiency that real life doesn't half to deal with.
+//     if (magnitude(direction) == 0) {
+//       const angle = Math.random() * 2 * Math.PI;
+//       unitDirection = [Math.cos(angle), Math.sin(angle)];
+//     } else {
+//       unitDirection = normalized(direction);
+//     }
+
+//     netAcceleration = added(netAcceleration, scaled(unitDirection, repulsiveForce));
+//     if (isNaN(netAcceleration[0])) {
+//       console.error("Could not compute repulsion acceleration", atom, otherAtom, repulsiveForce, direction);
+//       return [0, 0];
+//     }
+//   }
+
+//   return netAcceleration;
+// }
+
+// function getRepulsionMagnitude(atom1: Atom, atom2: Atom, minDistance: number): number {
+//   let distance = dist(atom1.position, atom2.position);
+//   distance = Math.max(distance, minDistance);
+
+//   return 1 / Math.pow(distance, 2);
+// }

@@ -53,12 +53,3 @@ function drawAtom(ctx: CanvasRenderingContext2D, atom: Atom, offset: number[]= [
   ctx.fill();
   ctx.closePath();
 }
-
-function drawAtomColor(ctx: CanvasRenderingContext2D, atom: Atom) {
-  // Draw a single dot
-  ctx.beginPath();
-  ctx.arc(atom.position[0], atom.position[1], 5, 0, Math.PI * 2);
-  ctx.fillStyle = "red"; // Dot color
-  ctx.fill();
-  ctx.closePath();
-}

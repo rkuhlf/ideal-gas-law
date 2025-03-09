@@ -2,7 +2,7 @@ import { screenActiveInterval } from "../canvas-helpers.js";
 import { initializeChart } from "../chart.js";
 import { MovingAverage } from "../moving-average.js";
 import { Simulation, ensureSimAtomCount } from "../pressure-simulation.js";
-import { renderBoxedSimulation, renderSimulation } from "../render-simulation.js";
+import { renderBoxedSimulation } from "../render-simulation.js";
 import { addResizeListener } from "../canvas-helpers.js";
 import { handleCustomDimensions } from "./input-handlers.js";
 import { Atom } from "../atom.js";
