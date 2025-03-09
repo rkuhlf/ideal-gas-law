@@ -1,7 +1,4 @@
 
-1. Clean up the writing.
-1. Make everything mathJax.
-
 ## Other Sims
 1. Rename to particle sims so that I can make some more pages and reuse the same infrastructure when I build other similar sims.
 
