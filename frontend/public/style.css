@@ -171,7 +171,7 @@ article > p {
 
 .sim-chart {
   width: 100%;
-  min-height: 40vh;
+  min-height: calc(max(40vh, 400px));
   height: 100%;
   padding: 15px;
 }
