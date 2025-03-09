@@ -21,6 +21,7 @@ async function loadWasm() {
 
 import katex from "katex";
 import "katex/dist/katex.min.css";
+import { initializeTitleSim } from "./sims/title-sim.js";
 
 
 
@@ -41,5 +42,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initializeRandomDirectionSim();
   initializeCustomizableSim();
   initializeCustomDimensionSim();
+  initializeTitleSim();
 });
 

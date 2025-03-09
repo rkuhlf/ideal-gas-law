@@ -11,41 +11,37 @@ import { Simulation } from "./pressure-simulation.ts";
 
 
 export function renderSimulation(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, sim: Simulation, offset: number[] = [0, 0]) {
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  renderBackground(canvas, ctx);
+  renderParticles(ctx, sim, offset);
+}
 
+export function renderBackground(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, color="white") {
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+export function renderParticles(ctx: CanvasRenderingContext2D, sim: Simulation, offset: number[] = [0, 0]) {
   for (const atom of sim.getAtoms()) {
     drawAtom(ctx, atom, offset);
   }
-
-  // for (const atom of sim.grid.getNear(cursor_x, cursor_y, 50)) {
-  //   drawAtomColor(ctx, atom);
-  // }
-
-  // ctx.beginPath();
-  // ctx.arc(cursor_x, cursor_y, 50, 0, Math.PI * 2);
-  // ctx.strokeStyle = "blue"; // Color of the perimeter
-  // ctx.lineWidth = 2;        // Thickness of the perimeter
-  // ctx.stroke();             // Draw the stroke
-  // ctx.closePath();
 }
 
 export function renderBoxedSimulation(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, sim: Simulation) {
   const topLeftX = canvas.width / 2 - sim.width / 2
-    const topLeftY = canvas.height / 2 - sim.height / 2
-    renderSimulation(canvas, ctx, sim, [
-        topLeftX,
-        topLeftY,
-    ]);
+  const topLeftY = canvas.height / 2 - sim.height / 2
+  renderSimulation(canvas, ctx, sim, [
+      topLeftX,
+      topLeftY,
+  ]);
 
-    ctx.strokeStyle = 'rgb(0, 0, 0)';
-    const offset = 10;
-    ctx.lineWidth = 5;
-    ctx.strokeRect(
-        topLeftX - offset / 2,
-        topLeftY - offset / 2,
-        sim.width + offset,
-        sim.height + offset);
+  ctx.strokeStyle = 'rgb(0, 0, 0)';
+  const offset = 10;
+  ctx.lineWidth = 5;
+  ctx.strokeRect(
+      topLeftX - offset / 2,
+      topLeftY - offset / 2,
+      sim.width + offset,
+      sim.height + offset);
 }
 
 

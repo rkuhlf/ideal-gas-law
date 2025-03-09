@@ -4,8 +4,6 @@
 
 1. I should probably be dividing by the perimeter if I even want to advertise this as a pressure.
 
-1. Make a nice title. Something with a photo of van der waal.
-
 ## Other Sims
 1. Rename to particle sims so that I can make some more pages and reuse the same infrastructure when I build other similar sims.
 

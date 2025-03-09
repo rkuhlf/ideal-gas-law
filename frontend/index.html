@@ -2,14 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/molecule.png" />
     <link rel="stylesheet" href="./style.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Van Der Waal's Equation</title>
+    <title>Ideal Gas Law</title>
   </head>
   <body>
-    <h1>What is Van der Waal's Equation?</h1>
+    <section class="title">
+      <h1 id="title-text">The Ideal Gas Law: Simulated</h1>
+      <canvas id="title-sim" width="1000" height="1000"></canvas>
+    </section>
 
     <article>
       <p>In school, we learn that <math-span>PV = nRT</math-span>. It's kind of cool: we get a function for pressure as being proportional to number of moles, <math-span>n</math-span>, multiplied by temperature <math-span>T</math-span>, and divided by volume <math-span>V</math-span>. Explicitly, <math-span>P = c \cdot \tfrac{nT}{V}</math-span>, where <math-span>c</math-span> happens to be the constant <math-span>8.314 \tfrac{\text{J}}{\text{K} \cdot \text{mol}}</math-span> in the real world, which we call <math-span>R</math-span>. This equation is justified by imagining the force exerted by a particle on the walls of an enclosing chamber, as I'll show in this article.</p>
