@@ -18,7 +18,7 @@ Unfortunately it only made sense to have a simulation class whenever there was a
 
 ### Commands
 - Build go: GOARCH=wasm GOOS=js go build -o ../public/wasm/main.wasm
-
+- protoc --proto_path=./svd-compression --go_out=./ --go_opt=Minterface.proto="svd-compression/protos" interface.proto
 
 
 ### Stack
@@ -28,3 +28,9 @@ Unfortunately it only made sense to have a simulation class whenever there was a
 
 - TODO: Add a folder with a bunch of scripts that I add to my bin that do a lot of the building stuff for me. .sh is probably fine.
 - Perhaps in order to support more particles it might be useful to investigate webGL. It looks like I'm having a hard time even rending this many particles.
+
+
+
+Frontend contains the page for every single page of the website. The backend stuff is more fragmented.
+
+Going to use protobuf 3 so I can learn a bit differently from work.

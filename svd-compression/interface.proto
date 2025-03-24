@@ -1,0 +1,35 @@
+
+syntax = "proto3";
+
+package interface;
+
+message Image {
+    repeated uint32 reds = 1;
+    repeated uint32 greens = 2;
+    repeated uint32 blues = 3;
+
+    // The number of columns that the image has.
+    uint32 cols = 4;
+}
+
+message CompressImageRequest {
+    
+}
+
+// A message from the frontend to the backend.
+message Request {
+    oneof req {
+        CompressImageRequest compress = 1;
+    }
+}
+
+message CompressImageResponse {
+    
+}
+
+// A message from the backend back to the frontend.
+message Response {
+    oneof res {
+        CompressImageResponse compress = 1;
+    }
+}
