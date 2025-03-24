@@ -17,7 +17,7 @@ Unfortunately it only made sense to have a simulation class whenever there was a
 
 
 ### Commands
-- Build go: GOARCH=wasm GOOS=js go build -o ../public/wasm/main.wasm
+- Build go (in bash terminal in svd-compression folder): GOARCH=wasm GOOS=js go build -o ../frontend/public/wasm/svd-compression.wasm
 - protoc --proto_path=./svd-compression --go_out=./ --go_opt=Minterface.proto="svd-compression/protos" interface.proto
 
 

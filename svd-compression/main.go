@@ -9,22 +9,37 @@ import (
 	"syscall/js"
 
 	"github.com/rkuhlf/ideal-gas-law/svd-compression/protos"
+	"google.golang.org/protobuf/proto"
 )
 
-func add(this js.Value, args []js.Value) any {
-	return "hello"
-}
-
 func main() {
-	fmt.Println("Hello world")
-
-	js.Global().Set("add", js.FuncOf(add))
+	js.Global().Set("request", js.FuncOf(respond))
 
 	<-make(chan struct{})
-
 }
 
-func respond(req protos.Request) protos.Response {
+func respond(this js.Value, args []js.Value) any {
+	if len(args) != 1 {
+		return "Exactly one argument must be passed"
+	}
+
+	req := protos.Request{}
+	err := proto.Unmarshal([]byte(args[0].String()), &req)
+	if err != nil {
+		return "failed to unmarshal request: " + err.Error()
+	}
+
+	res := respondToProto(&req)
+
+	marshaled_res, err := proto.Marshal(&res)
+	if err != nil {
+		return "failed to marshal response: " + err.Error()
+	}
+
+	return marshaled_res
+}
+
+func respondToProto(req *protos.Request) protos.Response {
 
 	switch req.GetReq().(type) {
 	case *protos.Request_Compress:
